@@ -1,0 +1,14 @@
+# dotenv
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
