@@ -1,0 +1,11 @@
+[submodule "OC_Atari"]
+	path = OC_Atari
+	url = https://github.com/k4ntz/OC_Atari
+	branch = ns_impl
+[submodule "HackAtari"]
+	path = HackAtari
+	url = https://github.com/k4ntz/HackAtari
+[submodule "ScoBots"]
+	path = ScoBots
+	url = https://github.com/k4ntz/ScoBots
+	branch = cleanup
