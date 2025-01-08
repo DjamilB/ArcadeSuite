@@ -1,5 +1,5 @@
-# TODO: replace with PyPi package when updated
--e git+https://github.com/k4ntz/HackAtari@8c91098b975bd6cdc68b485287ec33c20065150d#egg=hackatari&subdirectory=../../HackAtari
+# TODO: replace broken link (HackAtari is not used right now)
+# -e git+https://github.com/k4ntz/HackAtari@8c91098b975bd6cdc68b485287ec33c20065150d#egg=hackatari&subdirectory=../../HackAtari
 nicegui==2.9.1
 numpy==1.26.4
 pycairo==1.27.0
