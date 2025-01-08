@@ -7,6 +7,8 @@ ENV/
 env.bak/
 venv.bak/
 
+arcadesuit/__pycache__
+
 # Editor files
 .vscode/
 .idea/

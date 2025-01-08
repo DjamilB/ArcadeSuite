@@ -1,0 +1,62 @@
+
+canvas_script = f'''
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+const imageData = ctx.createImageData({width}, {height});
+
+function updateCanvas(base64Data) {{
+    const binaryData = atob(base64Data);  // Decode Base64 string to binary
+    var pixelData = new Uint8ClampedArray(binaryData.length);
+    for (let i = 0; i < binaryData.length; i++) {{
+        pixelData[i] = binaryData.charCodeAt(i);  // Convert binary string to byte array
+    }}
+    imageData.data.set(pixelData);  // Set pixel data on canvas
+    ctx.putImageData(imageData, 0, 0);  // Render to canvas
+}};
+'''
+    # env = HackAtari(
+    #     "Freeway",
+    #     [],
+    #     [],
+    #     0,
+    #     "",
+    #     dopamine_pooling=False,
+    #     game_mode=0,
+    #     difficulty=0,
+    #     render_mode="rgb_array",
+    #     hud=False,
+    #     render_oc_overlay=True,
+    #     buffer_window_size=4,
+    #     frameskip=4,
+    #     repeat_action_probability=0.25,
+    #     full_action_space=False,
+    # )
+    #
+    # obs, _ = env.reset()
+    # nstep = 1
+    # tr = 0
+    # while running:
+    #     # Human intervention to end the run
+    #     action = env.action_space.sample()
+    #     obs, reward, terminated, truncated, info = env.step(action)
+    #     tr += reward
+    #     if terminated or truncated:
+    #         print(info)
+    #         print(tr)
+    #         tr = 0
+    #         env.reset()
+    #     nstep += 1
+    #     rgb_data = env.render()
+    #     # rgba_data = np.concatenate([rgb_data, 255 * np.ones((height, width, 1), dtype=np.uint8)], axis=-1)  # Add alpha channel
+    #     pixel_data = rgb_data.tobytes()  # Convert to raw bytes
+    #
+    #     # Encode the data as Base64
+    #     base64_pixel_data = b64encode(pixel_data).decode('utf-8')  # Convert to string for JavaScript
+    #
+    #     # Debug: Print a snippet of the Base64 string
+    #     # print("Sending Base64 data (truncated):", base64_pixel_data[:32])
+    #
+    #     # Call the JavaScript update function
+    #     ui.run_javascript(f"updateCanvas('{base64_pixel_data}')")
+    #
+    # env.close()
