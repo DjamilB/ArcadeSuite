@@ -4,7 +4,6 @@ from utils import get_games, get_json
 from hackatari import HackAtari
 import numpy as np
 from base64 import b64encode
-import asyncio
 
 
 GAMES = get_games('../res/')
@@ -161,7 +160,7 @@ def menu_page():
 @ui.page("/game_screen")
 async def game_screen():
     # create HackAtari environment
-    env = HackAtari(selected_game, render_mode="rgb_array", dopamine_pooling=False)
+    env = HackAtari(selected_game, modifs=modif_selection, render_mode="rgb_array", dopamine_pooling=False)
     obs, _ = env.reset()
     nstep = 1
     tr = 0
@@ -207,6 +206,7 @@ async def game_screen():
         if e.action.keydown:
             if e.key == 'q':
                 timer.cancel()
+                ui.navigate.to("/")
 
     canvas_script = '''
     const canvas = document.getElementById("gameCanvas");
