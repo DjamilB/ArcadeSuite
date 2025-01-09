@@ -1,6 +1,10 @@
-from nicegui import ui, app
+from nicegui import ui, app, run
 from nicegui.events import KeyEventArguments
 from utils import get_games, get_json
+from hackatari import HackAtari
+import numpy as np
+from base64 import b64encode
+import asyncio
 
 
 GAMES = get_games('../res/')
@@ -10,11 +14,10 @@ select_color = 'bg-light-blue-2'
 normal_color = 'bg-grey-1'
 
 selected_game = GAMES[0]
-
-
+modif_selection = list()
 cards = dict()
 
-# app.native.start_args["debug"] = True
+app.native.start_args["debug"] = True
 
 
 @ui.page("/")
@@ -104,7 +107,7 @@ def menu_page():
                     modif_cards[modif].classes(f"{select_color}")
                 else:
                     modif_cards[modif].classes(f"{normal_color} {select_class}")
-        ui.image(f"../res/{selected_game}/icon.png").props("fit='contain' width='50%'").classes("fixed-right h-full")
+        ui.image(f"../res/{selected_game}/icon.png").props("fit='contain'").classes("absolute-right h-full w-[50%]")
 
     def handle_key(e: KeyEventArguments):
         global selected_modif_index
@@ -130,10 +133,11 @@ def menu_page():
                 update = True
             elif e.key == "Enter":
                 if selected_modif == "Submit":
-                    sel = list()
+                    global modif_selection
                     for modif in modifs:
                         if modif != "Submit" and modif_checkboxes[modif].value:
-                            sel.append(modif)
+                            modif_selection.append(modif)
+                    ui.navigate.to("/game_screen")
                     # TODO: route to next menu page or delete objects and rebuild for other menu options?
                 else:
                     modif_checkboxes[selected_modif].set_value(not modif_checkboxes[selected_modif].value)
@@ -151,6 +155,77 @@ def menu_page():
             modif_cards[modifs[selected_modif_index]].update()
             modif_cards[modifs[prev_select]].update()
 
+    ui.keyboard(on_key=handle_key)
+
+
+@ui.page("/game_screen")
+async def game_screen():
+    # create HackAtari environment
+    env = HackAtari(selected_game, render_mode="rgb_array", dopamine_pooling=False)
+    obs, _ = env.reset()
+    nstep = 1
+    tr = 0
+
+    async def run_game():
+        nonlocal env
+        nonlocal tr
+        nonlocal nstep
+
+        action = env.action_space.sample()
+        obs, reward, terminated, truncated, info = env.step(action)
+        tr += reward
+        if terminated or truncated:
+            print(info)
+            print(tr)
+            tr = 0
+            env.reset()
+        nstep += 1
+
+        rgb_data = env.render()
+        # rgb_data = np.random.randint(0, 256, (1050, 800, 3), dtype=np.uint8)
+        rgba_data = np.concatenate([rgb_data, 255 * np.ones((210, 160, 1), dtype=np.uint8)], axis=-1)  # Add alpha channel
+        pixel_data = rgba_data.tobytes()  # Convert to raw bytes
+
+        # Encode the data as Base64
+        base64_pixel_data = b64encode(pixel_data).decode('utf-8')  # Convert to string for JavaScript
+
+        # Debug: Print a snippet of the Base64 string
+        # print("Sending Base64 data (truncated):", base64_pixel_data[:32])
+
+        # Call the JavaScript update function
+        ui.run_javascript(f"updateCanvas('{base64_pixel_data}')")
+
+        # print(frame[0])
+        # TODO: put data on canvas
+
+    # thread = threading.Thread(target=run_game)
+    # thread.start()
+    timer = ui.timer(0.1, run_game)
+
+    def handle_key(e: KeyEventArguments):
+        nonlocal env
+        if e.action.keydown:
+            if e.key == 'q':
+                timer.cancel()
+
+    canvas_script = '''
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const imageData = ctx.createImageData(160, 210);
+
+    function updateCanvas(base64Data) {
+        const binaryData = atob(base64Data);  // Decode Base64 string to binary
+        var pixelData = new Uint8ClampedArray(binaryData.length);
+        for (let i = 0; i < binaryData.length; i++) {
+            pixelData[i] = binaryData.charCodeAt(i);  // Convert binary string to byte array
+        }
+        imageData.data.set(pixelData);  // Set pixel data on canvas
+        ctx.putImageData(imageData, 0, 0);  // Render to canvas
+    };
+    '''
+
+    ui.add_head_html('<style>body {background-color: bisque;}</style>')
+    ui.add_body_html(f"<canvas id='gameCanvas' style='border: 1px solid black;' width=160px height=210px/><script>{canvas_script}</script>")
     ui.keyboard(on_key=handle_key)
 
 
