@@ -92,36 +92,43 @@ def main_page():
     labels = dict()
     ui.add_head_html('<style>body {background-color: bisque;}</style>')
 
-  # TODO Layout with Splitscreen and Picture 
     def single_player_selection(): 
-        with ui.column().classes('w-full h-screen'):
-            ui.label('Singleplayer').classes('w-full h-1/5 text-2xl text-center align-middle font-bold') 
+        with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
+            with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column().classes('w-full h-screen justify-center align-center items-center'):
+                    ui.label(selected_game).classes('w-full text-2xl text-center align-middle font-bold') 
 
-            cards[selection[0]] = ui.card(align_items='center').classes(select_color + ' w-full h-3/5')
-            with cards[selection[0]]:
-                labels[selection[0]]= ui.label(playerSelection[0]).classes('text-2xl text-center align-middle font-bold')
+                    cards[selection[0]] = ui.card(align_items='center').classes(select_color + ' w-full ')
+                    with cards[selection[0]]:
+                        labels[selection[0]]= ui.label(playerSelection[0]).classes('text-2xl text-center align-middle font-bold')
 
-            cards[selection[1]] = ui.card(align_items='center').classes(select_class + ' ' + normal_color + ' w-full h-1/5') 
-            with cards[selection[1]]:
-                labels[selection[1]]= ui.label("Submit").classes('text-2xl text-center align-middle font-bold')
-    
-    # TODO Layout with Splitscreen and Picture
-    def multi_player__selection ():
-        with ui.column().classes('w-full h-screen justify-center'):
-            ui.label('Mutiplayer').classes('w-full h-1/5 text-2xl text-center align-middle font-bold')   
+                    cards[selection[1]] = ui.card(align_items='center').classes(select_class + ' ' + normal_color + ' w-full') 
+                    with cards[selection[1]]:
+                        labels[selection[1]]= ui.label("Submit").classes('text-2xl text-center align-middle font-bold')
             
-            with ui.row().classes('w-full h-3/5 gap-4 justify-center'):
-                cards[selection[0]] = ui.card(align_items='center').classes(select_color + ' h-full w-1/3')
-                with cards[selection[0]]:
-                    labels[selection[0]]=ui.label(playerSelection[0]).classes('text-2xl text-center align-middle font-bold')
+            ui.image(f"../res/{selected_game}/icon.png").props("fit='contain' width='50%'").classes("fixed-right h-full")
 
-                cards[selection[1]] = ui.card(align_items='center').classes(select_class + ' '+ normal_color + ' h-full w-1/3')
-                with cards[selection[1]]:
-                    labels[selection[1]]= ui.label(playerSelection[0]).classes('text-2xl text-center align-middle font-bold')
+    
+    def multi_player__selection ():
+        with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
+            with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column().classes('w-full h-screen justify-center align-center items-center'):
+                    ui.label(selected_game).classes('w-full text-2xl text-center align-middle font-bold')   
+                    
+                    with ui.row().classes('w-full gap-4 justify-center'):
+                        cards[selection[0]] = ui.card(align_items='center').classes(select_color + ' w-1/3')
+                        with cards[selection[0]]:
+                            labels[selection[0]]=ui.label(playerSelection[0]).classes('text-2xl text-center align-middle font-bold')
 
-            cards[selection[2]] = ui.card(align_items='center').classes(select_class + ' ' + normal_color + ' h-1/5 w-full')
-            with cards[selection[2]]:
-                ui.label("Submit").classes('text-2xl text-center align-middle font-bold')
+                        cards[selection[1]] = ui.card(align_items='center').classes(select_class + ' '+ normal_color + ' w-1/3')
+                        with cards[selection[1]]:
+                            labels[selection[1]]= ui.label(playerSelection[0]).classes('text-2xl text-center align-middle font-bold')
+
+                    cards[selection[2]] = ui.card(align_items='center').classes(select_class + ' ' + normal_color + ' w-full' )
+                    with cards[selection[2]]:
+                        ui.label("Submit").classes('text-2xl text-center align-middle font-bold')
+            ui.image(f"../res/{selected_game}/icon.png").props("fit='contain' width='50%'").classes("fixed-right h-full")
+
 
     def updateStatus(name):
         current_label= labels[name]
