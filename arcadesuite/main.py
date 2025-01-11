@@ -11,11 +11,11 @@ from base64 import b64encode
 import os
 
 
-GAMES = get_games('../res/')
+GAMES = get_games("../res/")
 select_index = 0
-select_class = 'no-shadow'
-select_color = 'bg-light-blue-2'
-normal_color = 'bg-grey-1'
+select_class = "no-shadow"
+select_color = "bg-light-blue-2"
+normal_color = "bg-grey-1"
 
 selection_index = 0
 
@@ -32,19 +32,19 @@ app.native.start_args["debug"] = True
 @ui.page("/")
 def main_page():
     global cards
-    ui.add_head_html('<style>body {background-color: bisque;}</style>')
+    ui.add_head_html("<style>body {background-color: bisque;}</style>")
     with ui.grid(columns=6):
         for game in GAMES:
-            cards[game] = ui.card(align_items='center')
+            cards[game] = ui.card(align_items="center")
             with cards[game]:
                 ui.label(game)
                 if os.path.isfile(f"../res/{game}/icon.png"):
-                    ui.image('../res/' + game + '/icon.png')
+                    ui.image(f"../res/{game}/icon.png")
             if game == GAMES[select_index]:
                 cards[game].classes(select_color)
                 continue
             else:
-                cards[game].classes('no-shadow ' + normal_color)
+                cards[game].classes(f"no-shadow {normal_color}")
 
     def handle_key(e: KeyEventArguments):
         global select_index
@@ -64,7 +64,7 @@ def main_page():
                 else:
                     select_index = 0
                 update = True
-            elif e.key == 'Enter':
+            elif e.key == "Enter":
                 ui.navigate.to("/selection")
 
         if update:
@@ -101,46 +101,46 @@ def main_page():
 
         # Single Player vs. Multiplayer
         meta = get_json(f"../res/{selected_game}/meta.json")
-        singlePlayer = not meta['multiplayer']
+        singlePlayer = not meta["multiplayer"]
 
         cards = dict()
         labels = dict()
-        ui.add_head_html('<style>body {background-color: bisque;}</style>')
+        ui.add_head_html("<style>body {background-color: bisque;}</style>")
 
         def single_player_selection():
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
                 with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
-                    with ui.column().classes('w-full h-screen justify-center align-center items-center'):
-                        ui.label(selected_game).classes('w-full text-2xl text-center align-middle font-bold')
+                    with ui.column().classes("w-full h-screen justify-center align-center items-center"):
+                        ui.label(selected_game).classes("w-full text-2xl text-center align-middle font-bold")
 
-                        cards[selection[0]] = ui.card(align_items='center').classes(select_color + ' w-full ')
+                        cards[selection[0]] = ui.card(align_items="center").classes(f"{select_color} w-full ")
                         with cards[selection[0]]:
-                            labels[selection[0]] = ui.label(playerSelection[0]).classes('text-2xl text-center align-middle font-bold')
+                            labels[selection[0]] = ui.label(playerSelection[0]).classes("text-2xl text-center align-middle font-bold")
 
-                        cards[selection[1]] = ui.card(align_items='center').classes(select_class + ' ' + normal_color + ' w-full')
+                        cards[selection[1]] = ui.card(align_items="center").classes(f"{select_class} {normal_color} w-full")
                         with cards[selection[1]]:
-                            labels[selection[1]]= ui.label("Submit").classes('text-2xl text-center align-middle font-bold')
+                            labels[selection[1]]= ui.label("Submit").classes("text-2xl text-center align-middle font-bold")
 
                 ui.image(f"../res/{selected_game}/icon.png").props("fit='contain' width='50%'").classes("fixed-right h-full")
 
         def multi_player__selection():
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
                 with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
-                    with ui.column().classes('w-full h-screen justify-center align-center items-center'):
-                        ui.label(selected_game).classes('w-full text-2xl text-center align-middle font-bold')
+                    with ui.column().classes("w-full h-screen justify-center align-center items-center"):
+                        ui.label(selected_game).classes("w-full text-2xl text-center align-middle font-bold")
 
-                        with ui.row().classes('w-full gap-4 justify-center'):
-                            cards[selection[0]] = ui.card(align_items='center').classes(select_color + ' w-1/3')
+                        with ui.row().classes("w-full gap-4 justify-center"):
+                            cards[selection[0]] = ui.card(align_items="center").classes(f"{select_color} w-1/3")
                             with cards[selection[0]]:
-                                labels[selection[0]] = ui.label(playerSelection[0]).classes('text-2xl text-center align-middle font-bold')
+                                labels[selection[0]] = ui.label(playerSelection[0]).classes("text-2xl text-center align-middle font-bold")
 
-                            cards[selection[1]] = ui.card(align_items='center').classes(select_class + ' ' + normal_color + ' w-1/3')
+                            cards[selection[1]] = ui.card(align_items="center").classes(f"{select_class} {normal_color} w-1/3")
                             with cards[selection[1]]:
                                 labels[selection[1]] = ui.label(playerSelection[0]).classes('text-2xl text-center align-middle font-bold')
 
-                        cards[selection[2]] = ui.card(align_items='center').classes(select_class + ' ' + normal_color + ' w-full')
+                        cards[selection[2]] = ui.card(align_items="center").classes(f"{select_class} {normal_color} w-full")
                         with cards[selection[2]]:
-                            ui.label("Submit").classes('text-2xl text-center align-middle font-bold')
+                            ui.label("Submit").classes("text-2xl text-center align-middle font-bold")
                 ui.image(f"../res/{selected_game}/icon.png").props("fit='contain' width='50%'").classes("fixed-right h-full")
 
         def updateStatus(name):
@@ -154,7 +154,7 @@ def main_page():
 
         def returnStatus():
             for name in selection:
-                if name != 'Submit':
+                if name != "Submit":
                     selected_mode.append(labels[name].text)
 
         def handle_key(e: KeyEventArguments):
@@ -164,7 +164,7 @@ def main_page():
 
             if singlePlayer:
                 if e.action.keydown:
-                    if e.key == 'Escape':
+                    if e.key == "Escape":
                         ui.navigate.to("/")
                     elif e.key.arrow_up:
                         if selection_index > 0:
@@ -178,7 +178,7 @@ def main_page():
                         else:
                             selection_index = 0
                         update = True
-                    elif e.key == 'Enter':
+                    elif e.key == "Enter":
                         if selection_index != len(selection)-1:
                             updateStatus(selection[selection_index])
                         else:
@@ -186,7 +186,7 @@ def main_page():
                             ui.navigate.to("/menu")
             else:
                 if e.action.keydown:
-                    if e.key == 'Escape':
+                    if e.key == "Escape":
                         ui.navigate.to("/")
                     elif e.key.arrow_up:
                         if selection_index < len(selection)-1:
@@ -204,7 +204,7 @@ def main_page():
                         if selection_index < len(selection)-1:
                             selection_index = (selection_index + 1) % 2
                             update = True
-                    elif e.key == 'Enter':
+                    elif e.key == "Enter":
                         if selection_index != len(selection)-1:
                             updateStatus(selection[selection_index])
                         else:
@@ -227,11 +227,11 @@ def main_page():
                 cards[selection[prev_index]].update()
 
         if singlePlayer:
-            selection.extend(['PlayerA', 'Submit'])
+            selection.extend(["PlayerA", "Submit"])
             single_player_selection()
 
         else:
-            selection.extend(['PlayerA', 'PlayerB', 'Submit'])
+            selection.extend(["PlayerA", "PlayerB", "Submit"])
             multi_player__selection()
 
         ui.keyboard(on_key=handle_key)
@@ -243,7 +243,7 @@ def menu_page():
     global selected_modif
     global modif_cards
 
-    ui.add_head_html('<style>body {background-color: bisque;}</style>')
+    ui.add_head_html("<style>body {background-color: bisque;}</style>")
     meta = get_json(f"../res/{selected_game}/meta.json")
     modifs = list()
     for modif in meta["modifs"]:
@@ -281,7 +281,7 @@ def menu_page():
 
         prev_select = selected_modif_index
         if e.action.keydown:
-            if e.key == 'Escape':
+            if e.key == "Escape":
                 ui.navigate.to("/selection")
             elif e.key.arrow_up:
                 if selected_modif_index > 0:
@@ -351,7 +351,7 @@ async def game_screen():
         pixel_data = rgba_data.tobytes()  # Convert to raw bytes
 
         # Encode the data as Base64
-        base64_pixel_data = b64encode(pixel_data).decode('utf-8')  # Convert to string for JavaScript
+        base64_pixel_data = b64encode(pixel_data).decode("utf-8")  # Convert to string for JavaScript
 
         # Debug: Print a snippet of the Base64 string
         # print("Sending Base64 data (truncated):", base64_pixel_data[:32])
@@ -369,7 +369,7 @@ async def game_screen():
     def handle_key(e: KeyEventArguments):
         nonlocal env
         if e.action.keydown:
-            if e.key == 'q':
+            if e.key == "q":
                 timer.cancel()
                 ui.navigate.to("/")
 
@@ -389,7 +389,7 @@ async def game_screen():
     };
     '''
 
-    ui.add_head_html('<style>body {background-color: bisque;}</style>')
+    ui.add_head_html("<style>body {background-color: bisque;}</style>")
     ui.add_body_html(f"<canvas id='gameCanvas' style='border: 1px solid black;' width=160px height=210px/><script>{canvas_script}</script>")
     ui.keyboard(on_key=handle_key)
 
