@@ -1,4 +1,5 @@
 {
+  "multiplayer": true,
   "modifs": {
     "obelix": "o",
     "unlimited_lives": "ul",

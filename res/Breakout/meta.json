@@ -1,0 +1,14 @@
+{
+  "multiplayer": false,
+  "modifs": {
+    "drift direction": { 
+    	"right": "dr",
+    	"left": "dl"
+     },
+     "drift strength": { 
+    	"no drift": "s0",
+    	"normal drift": "s1",
+    	"strong drift": "s2"
+     }
+  }
+}
