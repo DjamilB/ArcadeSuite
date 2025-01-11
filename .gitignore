@@ -7,8 +7,6 @@ ENV/
 env.bak/
 venv.bak/
 
-arcadesuit/__pycache__
-
 # Editor files
 .vscode/
 .idea/
@@ -16,4 +14,5 @@ arcadesuit/__pycache__
 *.sublime-workspace
 
 
+**/__pycache__
 res/*/icon.png
