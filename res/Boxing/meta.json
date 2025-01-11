@@ -1,0 +1,8 @@
+{
+  "multiplayer": true,
+  "modifs": {
+    "gravity": "g",
+    "drunken_boxing": "db",
+    "one_armed": "oa"
+  }
+}
