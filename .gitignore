@@ -14,3 +14,4 @@ arcadesuit/__pycache__
 .idea/
 *.sublime-project
 *.sublime-workspace
+*/icon.png
