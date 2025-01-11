@@ -1,3 +1,7 @@
+# fix issues with arch linux
+import multiprocessing
+multiprocessing.set_start_method("spawn", force=True)
+
 from nicegui import ui, app, run
 from nicegui.events import KeyEventArguments
 from utils import get_games, get_json
@@ -385,4 +389,4 @@ async def game_screen():
     ui.keyboard(on_key=handle_key)
 
 
-ui.run(title="Arcade Suite", native=True, dark=False, window_size=(900, 600))
+ui.run(title="Arcade Suite", native=False, dark=False, window_size=(900, 600))
