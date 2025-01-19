@@ -366,7 +366,6 @@ async def game_screen():
         nstep += 1
 
         rgb_data = env.render()
-        # rgb_data = np.random.randint(0, 256, (1050, 800, 3), dtype=np.uint8)
         rgba_data = np.concatenate([rgb_data, 255 * np.ones((210, 160, 1), dtype=np.uint8)], axis=-1)  # Add alpha channel
         pixel_data = rgba_data.tobytes()  # Convert to raw bytes
 
@@ -379,11 +378,6 @@ async def game_screen():
         # Call the JavaScript update function
         ui.run_javascript(f"updateCanvas('{base64_pixel_data}')")
 
-        # print(frame[0])
-        # TODO: put data on canvas
-
-    # thread = threading.Thread(target=run_game)
-    # thread.start()
     timer = ui.timer(0.1, run_game)
 
     def handle_key(e: KeyEventArguments):
