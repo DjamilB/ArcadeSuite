@@ -27,7 +27,7 @@ selected_mode = []
 
 cards = dict()
 
-app.native.start_args["debug"] = True
+# app.native.start_args["debug"] = True
 
 
 @ui.page("/")
@@ -120,7 +120,7 @@ def main_page():
 
                         cards[selection[1]] = ui.card(align_items="center").classes(f"{select_class} {normal_color} w-full")
                         with cards[selection[1]]:
-                            labels[selection[1]]= ui.label("Submit").classes("text-2xl text-center align-middle font-bold")
+                            labels[selection[1]] = ui.label("Submit").classes("text-2xl text-center align-middle font-bold")
 
                 ui.image(f"../res/{selected_game}/icon.png").props("fit='contain' width='50%'").classes("fixed-right h-full")
 
@@ -214,7 +214,7 @@ def main_page():
 
             if update:
                 select = selection[selection_index]
-                #print(select)
+                # print(select)
 
                 cards[selection[selection_index]]._classes.remove(select_class)
                 cards[selection[selection_index]]._classes.remove(normal_color)
@@ -246,7 +246,7 @@ def menu_page():
 
     ui.add_head_html("<style>body {background-color: bisque;}</style>")
     meta = get_json(f"../res/{selected_game}/meta.json")
-    df = pd.read_json(f"../res/{selected_game}/meta.json") # Reads out the Data as a datastructure (maybe use instead of get_json)
+    df = pd.read_json(f"../res/{selected_game}/meta.json")  # Reads out the Data as a datastructure (maybe use instead of get_json)
     modifs = list()
     for modif in meta["modifs"]:
         modifs.append(modif)
@@ -256,7 +256,7 @@ def menu_page():
     selected_modif = modifs[selected_modif_index]
 
     modif_cards = dict()
-    modif_labels = dict() # For modifs with submodifs like s[0-2]
+    modif_labels = dict()  # For modifs with submodifs like s[0-2]
     modif_checkboxes = dict()
     with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
         with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
@@ -267,14 +267,14 @@ def menu_page():
                         if modif == "Submit":
                             card.classes("q-pa-sm")
                             ui.label(modif)
-                        elif isinstance (df["modifs"][modif], dict): 
+                        elif isinstance(df["modifs"][modif], dict):
                             list_mods = df["modifs"][modif]
                             key, mod = list(list_mods.items())[0]
-                            #print(f"{key}: {mod}")
+                            # print(f"{key}: {mod}")
                             card.classes("q-pr-md")
                             with ui.row():
                                 ui.label(modif).classes("font-bold")
-                                modif_labels[modif] = ui.label(key)     # Maybe there is a better ui object 
+                                modif_labels[modif] = ui.label(key)     # Maybe there is a better ui object
                         else:
                             card.classes("q-pr-md")
                             modif_checkboxes[modif] = ui.checkbox(modif)
@@ -309,20 +309,20 @@ def menu_page():
             elif e.key == "Enter":
                 if selected_modif == "Submit":
                     global modif_selection
+                    modif_selection = list()
                     for modif in modifs:
                         if modif != "Submit":
-                            if isinstance (df["modifs"][modif], dict):
-                                current_key = modif_labels[modif].text 
+                            if isinstance(df["modifs"][modif], dict):
+                                current_key = modif_labels[modif].text
                                 modif_selection.append(df["modifs"][modif][current_key])
                             elif modif_checkboxes[modif].value:
                                 modif_selection.append(modif)
                     ui.navigate.to("/game_screen")
-                    # TODO: route to next menu page or delete objects and rebuild for other menu options?
-                elif isinstance (df["modifs"][selected_modif], dict):
+                elif isinstance(df["modifs"][selected_modif], dict):
                     keys = list(df["modifs"][selected_modif].keys())        # list of possible Key Values
                     current_key = modif_labels[selected_modif].text         # Current Key Value
-                    new_index = (keys.index(current_key) +1) % len(keys)    #Index for new Key Value
-                    modif_labels[selected_modif].text = keys[new_index]     #set new Key Value
+                    new_index = (keys.index(current_key) + 1) % len(keys)   # Index for new Key Value
+                    modif_labels[selected_modif].text = keys[new_index]     # set new Key Value
                 else:
                     modif_checkboxes[selected_modif].set_value(not modif_checkboxes[selected_modif].value)
 
@@ -378,7 +378,7 @@ async def game_screen():
         # Call the JavaScript update function
         ui.run_javascript(f"updateCanvas('{base64_pixel_data}')")
 
-    timer = ui.timer(0.1, run_game)
+    timer = ui.timer(1/30, run_game)
 
     def handle_key(e: KeyEventArguments):
         nonlocal env
@@ -387,6 +387,7 @@ async def game_screen():
                 timer.cancel()
                 ui.navigate.to("/")
 
+    # TODO(Lars): put in different file
     canvas_script = '''
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
