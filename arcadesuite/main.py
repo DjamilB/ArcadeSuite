@@ -23,7 +23,7 @@ selection_index = 0
 selected_game = GAMES[0]
 modif_selection = list()
 
-selected_mode = []
+player_agent_selection = []
 
 cards = dict()
 
@@ -89,7 +89,10 @@ def main_page():
     global selected_mode
     global selected_game
     global selection_index
+    global player_agent_selection
 
+    player_agent_selection = []
+    files=[]
     if not os.path.isfile(f"../res/{selected_game}/meta.json"):
         ui.navigate.to("/game_screen")
     else:
@@ -153,64 +156,70 @@ def main_page():
             current_label.text = playerSelection[new_index]
             current_label.update()
 
-        def returnStatus():
-            for name in selection:
-                if name != "Submit":
-                    selected_mode.append(labels[name].text)
+        async def choose_file(index):
+            item,  = await app.native.main_window.create_file_dialog(allow_multiple=False)
+            file = item
+            print(file)
+            files[index]=file
 
-        def handle_key(e: KeyEventArguments):
+        async def handle_key(e: KeyEventArguments):
             global selection_index
             prev_index = selection_index
             update = False
 
-            if singlePlayer:
-                if e.action.keydown:
-                    if e.key == "Escape":
-                        ui.navigate.to("/")
-                    elif e.key.arrow_up:
+            if e.action.keydown:
+                if e.key == "Escape":
+                    ui.navigate.to("/")
+
+                elif e.key.arrow_up:
+                    if singlePlayer:
                         if selection_index > 0:
                             selection_index -= 1
                         else:
+                            selection_index = len(selection)-1  
+                    else: 
+                        if selection_index < len(selection)-1:
                             selection_index = len(selection)-1
-                        update = True
-                    elif e.key.arrow_down:
+                        else:
+                            selection_index = 0
+                    update = True
+
+                elif e.key.arrow_down:
+                    if singlePlayer:
                         if selection_index < len(selection)-1:
                             selection_index += 1
                         else:
                             selection_index = 0
-                        update = True
-                    elif e.key == "Enter":
-                        if selection_index != len(selection)-1:
-                            updateStatus(selection[selection_index])
-                        else:
-                            returnStatus()
-                            ui.navigate.to("/menu")
-            else:
-                if e.action.keydown:
-                    if e.key == "Escape":
-                        ui.navigate.to("/")
-                    elif e.key.arrow_up:
+                    else: 
                         if selection_index < len(selection)-1:
                             selection_index = len(selection)-1
                         else:
                             selection_index = 0
+                    update = True
+
+                elif not singlePlayer and (e.key.arrow_right or e.key.arrow_left):
+                    if selection_index < len(selection)-1:
+                        selection_index = (selection_index + 1) % 2
                         update = True
-                    elif e.key.arrow_down:
-                        if selection_index < len(selection)-1:
-                            selection_index = len(selection)-1
-                        else:
-                            selection_index = 0
-                        update = True
-                    elif e.key.arrow_right or e.key.arrow_left:
-                        if selection_index < len(selection)-1:
-                            selection_index = (selection_index + 1) % 2
-                            update = True
-                    elif e.key == "Enter":
-                        if selection_index != len(selection)-1:
-                            updateStatus(selection[selection_index])
-                        else:
-                            returnStatus()
+
+                elif e.key == " " and selection[selection_index]!="Submit":
+                    if labels[selection[selection_index]].text=="Agent":
+                        await choose_file(selection_index)
+                
+                elif e.key == "Enter":
+                    if selection_index != len(selection)-1:
+                        updateStatus(selection[selection_index])
+                    else:
+                        temp = True
+                        for i in range (0,len(selection)-1):
+                            if labels[selection[i]].text== "Agent" and files[i]== "-":
+                                temp = False
+                            
+                        if temp:
+                            player_agent_selection = files
                             ui.navigate.to("/menu")
+                        else:
+                            ui.notify("No Agent selected!")
 
             if update:
                 select = selection[selection_index]
@@ -229,14 +238,15 @@ def main_page():
 
         if singlePlayer:
             selection.extend(["PlayerA", "Submit"])
+            files = ["-"]
             single_player_selection()
 
         else:
             selection.extend(["PlayerA", "PlayerB", "Submit"])
+            files = ["-", "-"]
             multi_player__selection()
 
         ui.keyboard(on_key=handle_key)
-
 
 @ui.page("/menu")
 def menu_page():
@@ -315,7 +325,7 @@ def menu_page():
                             if isinstance(df["modifs"][modif], dict):
                                 current_key = modif_labels[modif].text
                                 if current_key != "default":
-                                	modif_selection.append(df["modifs"][modif][current_key])
+                                    modif_selection.append(df["modifs"][modif][current_key])
                             elif modif_checkboxes[modif].value:
                                 modif_selection.append(modif)
                     ui.navigate.to("/game_screen")
@@ -342,11 +352,14 @@ def menu_page():
 
     ui.keyboard(on_key=handle_key)
 
-
 @ui.page("/game_screen")
 async def game_screen():
     # create HackAtari environment
     env = HackAtari(selected_game, modifs=modif_selection, render_mode="rgb_array", dopamine_pooling=False)
+    keys2actions = env.unwrapped.get_keys_to_action()
+    print(keys2actions)
+
+    
     obs, _ = env.reset()
     nstep = 1
     tr = 0
@@ -355,7 +368,6 @@ async def game_screen():
         nonlocal env
         nonlocal tr
         nonlocal nstep
-
         action = env.action_space.sample()
         obs, reward, terminated, truncated, info = env.step(action)
         tr += reward
