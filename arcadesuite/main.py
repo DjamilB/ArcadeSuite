@@ -4,7 +4,7 @@ multiprocessing.set_start_method("spawn", force=True)
 
 from nicegui import ui, app, run
 from nicegui.events import KeyEventArguments
-from utils import get_games, get_json
+from utils import get_games, get_json, map_to_pygame_key_codes
 from hackatari import HackAtari
 import numpy as np
 from base64 import b64encode
@@ -345,17 +345,31 @@ def menu_page():
 @ui.page("/game_screen")
 async def game_screen():
     # create HackAtari environment
-    env = HackAtari(selected_game, modifs=modif_selection, render_mode="rgb_array", dopamine_pooling=False)
+    env = HackAtari(selected_game, modifs=modif_selection, render_mode="rgb_array", dopamine_pooling=False, full_action_space=True)
     obs, _ = env.reset()
     nstep = 1
     tr = 0
+
+    env.render_oc_overlay = True
+    env.render()
+    env.render_oc_overlay = False
+
+    keys2action = env.unwrapped.get_keys_to_action()
+    current_keys_down = set()
 
     async def run_game():
         nonlocal env
         nonlocal tr
         nonlocal nstep
+        nonlocal current_keys_down
 
-        action = env.action_space.sample()
+        pressed_keys = list(current_keys_down)
+        pressed_keys.sort()
+        pressed_keys = tuple(pressed_keys)
+        if pressed_keys in keys2action.keys():
+            action = keys2action[pressed_keys]
+        else:
+            action = 0
         obs, reward, terminated, truncated, info = env.step(action)
         tr += reward
         if terminated or truncated:
@@ -363,10 +377,11 @@ async def game_screen():
             print(tr)
             tr = 0
             env.reset()
+            # Navigate to some game over screen?
         nstep += 1
 
-        rgb_data = env.render()
-        rgba_data = np.concatenate([rgb_data, 255 * np.ones((210, 160, 1), dtype=np.uint8)], axis=-1)  # Add alpha channel
+        rgb_data = env.render().transpose((1, 0, 2))
+        rgba_data = np.concatenate([rgb_data, 255 * np.ones((1050, 800, 1), dtype=np.uint8)], axis=-1)  # Add alpha channel
         pixel_data = rgba_data.tobytes()  # Convert to raw bytes
 
         # Encode the data as Base64
@@ -382,16 +397,23 @@ async def game_screen():
 
     def handle_key(e: KeyEventArguments):
         nonlocal env
+        nonlocal current_keys_down
+        nonlocal keys2action
         if e.action.keydown:
             if e.key == "q":
                 timer.cancel()
                 ui.navigate.to("/")
+            elif (map_to_pygame_key_codes(e.key),) in keys2action.keys():
+                current_keys_down.add(map_to_pygame_key_codes(e.key))
+        if e.action.keyup:
+            if (map_to_pygame_key_codes(e.key),) in keys2action.keys():
+                current_keys_down.remove(map_to_pygame_key_codes(e.key))
 
     # TODO(Lars): put in different file
     canvas_script = '''
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-    const imageData = ctx.createImageData(160, 210);
+    const imageData = ctx.createImageData(800, 1050);
 
     function updateCanvas(base64Data) {
         const binaryData = atob(base64Data);  // Decode Base64 string to binary
@@ -404,8 +426,8 @@ async def game_screen():
     };
     '''
 
-    ui.add_head_html("<style>body {background-color: bisque;}</style>")
-    ui.add_body_html(f"<canvas id='gameCanvas' style='border: 1px solid black;' width=160px height=210px/><script>{canvas_script}</script>")
+    ui.add_head_html("<style>body {background-color: black;}</style>")
+    ui.add_body_html(f"<canvas id='gameCanvas' style='border: 1px solid black;' width=800px height=1050px/><script>{canvas_script}</script>")
     ui.keyboard(on_key=handle_key)
 
 
