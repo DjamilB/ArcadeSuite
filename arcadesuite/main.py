@@ -314,7 +314,8 @@ def menu_page():
                         if modif != "Submit":
                             if isinstance(df["modifs"][modif], dict):
                                 current_key = modif_labels[modif].text
-                                modif_selection.append(df["modifs"][modif][current_key])
+                                if current_key != "default":
+                                	modif_selection.append(df["modifs"][modif][current_key])
                             elif modif_checkboxes[modif].value:
                                 modif_selection.append(modif)
                     ui.navigate.to("/game_screen")

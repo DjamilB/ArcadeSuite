@@ -10,4 +10,4 @@ Then go into the HackAtari folder and run ```pip install -e .```. <br>
 You will also have to install some dependencies with: <br>
 ```sudo apt install pkg-config libcairo2-dev gcc python3-dev libgirepository1.0-dev```. <br>
 Then you can install the requirments with: <br>
-```pip install -r requirments.txt``` <br>
+```pip install -r requirements.txt``` <br>
