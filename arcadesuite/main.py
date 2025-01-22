@@ -220,6 +220,7 @@ def main_page():
                             ui.navigate.to("/menu")
                         else:
                             ui.notify("No Agent selected!")
+                            ui.notify("Press Whitespace to select Agent")
 
             if update:
                 select = selection[selection_index]
@@ -356,10 +357,7 @@ def menu_page():
 async def game_screen():
     # create HackAtari environment
     env = HackAtari(selected_game, modifs=modif_selection, render_mode="rgb_array", dopamine_pooling=False)
-    keys2actions = env.unwrapped.get_keys_to_action()
-    print(keys2actions)
 
-    
     obs, _ = env.reset()
     nstep = 1
     tr = 0
