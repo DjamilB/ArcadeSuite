@@ -10,6 +10,8 @@ import numpy as np
 from base64 import b64encode
 import os
 import pandas as pd
+from ocatari.utils import load_agent
+import torch
 
 
 GAMES = get_games("../res/")
@@ -160,11 +162,15 @@ def main_page():
         async def choose_file(index):
             item,  = await app.native.main_window.create_file_dialog(allow_multiple=False)
             file = item
-            print(file)
-            files[index]=file
+            # print(file)
+            files[index] = file
+
+        def choose_agent(index):
+            pass
 
         async def handle_key(e: KeyEventArguments):
             global selection_index
+            global player_agent_selection
             prev_index = selection_index
             update = False
 
@@ -177,8 +183,8 @@ def main_page():
                         if selection_index > 0:
                             selection_index -= 1
                         else:
-                            selection_index = len(selection)-1  
-                    else: 
+                            selection_index = len(selection)-1
+                    else:
                         if selection_index < len(selection)-1:
                             selection_index = len(selection)-1
                         else:
@@ -191,7 +197,7 @@ def main_page():
                             selection_index += 1
                         else:
                             selection_index = 0
-                    else: 
+                    else:
                         if selection_index < len(selection)-1:
                             selection_index = len(selection)-1
                         else:
@@ -203,8 +209,8 @@ def main_page():
                         selection_index = (selection_index + 1) % 2
                         update = True
 
-                elif e.key == " " and selection[selection_index]!="Submit":
-                    if labels[selection[selection_index]].text=="Agent":
+                elif e.key == " " and selection[selection_index] != "Submit":
+                    if labels[selection[selection_index]].text == "Agent":
                         await choose_file(selection_index)
 
                 elif e.key == "Enter":
@@ -212,8 +218,8 @@ def main_page():
                         updateStatus(selection[selection_index])
                     else:
                         temp = True
-                        for i in range (0,len(selection)-1):
-                            if labels[selection[i]].text== "Agent" and files[i]== "-":
+                        for i in range(0, len(selection)-1):
+                            if labels[selection[i]].text == "Agent" and files[i] == "-":
                                 temp = False
                         if temp:
                             player_agent_selection = files
@@ -354,10 +360,28 @@ def menu_page():
     ui.keyboard(on_key=handle_key)
 
 
+# TODO(lars): Use keyboard controls only when 'manual player' input is selected
+#             and let agent play otherwise.
 @ui.page("/game_screen")
 async def game_screen():
     # create HackAtari environment
-    env = HackAtari(selected_game, modifs=modif_selection, render_mode="rgb_array", dopamine_pooling=False, full_action_space=True)
+    obs_mode = "obj"
+    is_agent = len(player_agent_selection) > 0 and player_agent_selection[0] != "-"
+    if is_agent:
+        if player_agent_selection[0].find("dqn", 0, len(player_agent_selection[0])) != -1:
+            obs_mode = "dqn"
+        elif player_agent_selection[0].find("c51", 0, len(player_agent_selection[0])) != -1:
+            obs_mode = "dqn"
+
+    env = HackAtari(selected_game,
+                    modifs=modif_selection,
+                    render_mode="rgb_array",
+                    dopamine_pooling=False,
+                    full_action_space=False,
+                    obs_mode=obs_mode)
+
+    if is_agent:
+        _, policy = load_agent(player_agent_selection[0], env, "cpu")
     obs, _ = env.reset()
     nstep = 1
     tr = 0
@@ -374,14 +398,19 @@ async def game_screen():
         nonlocal tr
         nonlocal nstep
         nonlocal current_keys_down
+        nonlocal obs
+        nonlocal policy
 
         pressed_keys = list(current_keys_down)
         pressed_keys.sort()
         pressed_keys = tuple(pressed_keys)
-        if pressed_keys in keys2action.keys():
-            action = keys2action[pressed_keys]
+        if not is_agent:
+            if pressed_keys in keys2action.keys():
+                action = keys2action[pressed_keys]
+            else:
+                action = 0
         else:
-            action = 0
+            action = policy(torch.Tensor(obs).unsqueeze(0))[0]
         obs, reward, terminated, truncated, info = env.step(action)
         tr += reward
         if terminated or truncated:
@@ -443,4 +472,4 @@ async def game_screen():
     ui.keyboard(on_key=handle_key)
 
 
-ui.run(title="Arcade Suite", native=False, dark=False, window_size=(900, 600))
+ui.run(title="Arcade Suite", native=False, dark=False, window_size=(900, 1050))
