@@ -360,8 +360,6 @@ def menu_page():
     ui.keyboard(on_key=handle_key)
 
 
-# TODO(lars): Use keyboard controls only when 'manual player' input is selected
-#             and let agent play otherwise.
 @ui.page("/game_screen")
 async def game_screen():
     # create HackAtari environment
