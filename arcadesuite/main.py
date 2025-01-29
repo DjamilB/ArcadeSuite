@@ -2,18 +2,13 @@
 import multiprocessing
 multiprocessing.set_start_method("spawn", force=True)
 
-from nicegui import ui, app, run
+from nicegui import ui, app
 from nicegui.events import KeyEventArguments
-from utils import get_games, get_json, map_to_pygame_key_codes
-from hackatari import HackAtari
-import numpy as np
-from base64 import b64encode
+from utils import get_games, get_json
 import os
-import pandas as pd
-from ocatari.utils import load_agent
-import torch
 
 import elements
+import pages
 
 
 GAMES = get_games("../res/")
@@ -31,6 +26,8 @@ player_agent_selection = []
 
 cards = dict()
 
+
+# Uncomment to open Web Inspector
 # app.native.start_args["debug"] = True
 
 
@@ -219,6 +216,9 @@ def main_page():
         ui.keyboard(on_key=handle_key)
 
 
+game_page = pages.GamePage()
+
+
 @ui.page("/menu")
 def menu_page():
     global selected_modif_index
@@ -283,7 +283,9 @@ def menu_page():
                                 modif_selection.append(modif_cards[modif].get_current())
                             elif modif_cards[modif].get_value():
                                 modif_selection.append(modif)
-                    ui.navigate.to("/game_screen")
+                    ui.navigate.to("/game_page")
+                    is_agent = len(player_agent_selection) > 0 and player_agent_selection[0] != "-"
+                    game_page.populate(selected_game, modif_selection, is_agent, player_agent_selection[0] if is_agent else "")
                 elif isinstance(modif_cards[selected_modif], elements.CarouselCard):
                     modif_cards[selected_modif].next()
                 else:
@@ -294,116 +296,6 @@ def menu_page():
             modif_cards[modifs[selected_modif_index]].select()
             selected_modif = modifs[selected_modif_index]
 
-    ui.keyboard(on_key=handle_key)
-
-
-@ui.page("/game_screen")
-async def game_screen():
-    # create HackAtari environment
-    obs_mode = "obj"
-    is_agent = len(player_agent_selection) > 0 and player_agent_selection[0] != "-"
-    if is_agent:
-        if player_agent_selection[0].find("dqn", 0, len(player_agent_selection[0])) != -1:
-            obs_mode = "dqn"
-        elif player_agent_selection[0].find("c51", 0, len(player_agent_selection[0])) != -1:
-            obs_mode = "dqn"
-
-    env = HackAtari(selected_game,
-                    modifs=modif_selection,
-                    render_mode="rgb_array",
-                    dopamine_pooling=False,
-                    full_action_space=False,
-                    obs_mode=obs_mode)
-
-    if is_agent:
-        _, policy = load_agent(player_agent_selection[0], env, "cpu")
-    obs, _ = env.reset()
-    nstep = 1
-    tr = 0
-
-    env.render_oc_overlay = True
-    env.render()
-    env.render_oc_overlay = False
-
-    keys2action = env.unwrapped.get_keys_to_action()
-    current_keys_down = set()
-
-    async def run_game():
-        nonlocal env
-        nonlocal tr
-        nonlocal nstep
-        nonlocal current_keys_down
-        nonlocal obs
-        nonlocal policy
-
-        pressed_keys = list(current_keys_down)
-        pressed_keys.sort()
-        pressed_keys = tuple(pressed_keys)
-        if not is_agent:
-            if pressed_keys in keys2action.keys():
-                action = keys2action[pressed_keys]
-            else:
-                action = 0
-        else:
-            action = policy(torch.Tensor(obs).unsqueeze(0))[0]
-        obs, reward, terminated, truncated, info = env.step(action)
-        tr += reward
-        if terminated or truncated:
-            print(info)
-            print(tr)
-            tr = 0
-            env.reset()
-            # Navigate to some game over screen?
-        nstep += 1
-
-        rgb_data = env.render().transpose((1, 0, 2))
-        rgba_data = np.concatenate([rgb_data, 255 * np.ones((1050, 800, 1), dtype=np.uint8)], axis=-1)  # Add alpha channel
-        pixel_data = rgba_data.tobytes()  # Convert to raw bytes
-
-        # Encode the data as Base64
-        base64_pixel_data = b64encode(pixel_data).decode("utf-8")  # Convert to string for JavaScript
-
-        # Debug: Print a snippet of the Base64 string
-        # print("Sending Base64 data (truncated):", base64_pixel_data[:32])
-
-        # Call the JavaScript update function
-        ui.run_javascript(f"updateCanvas('{base64_pixel_data}')")
-
-    timer = ui.timer(1/30, run_game)
-
-    def handle_key(e: KeyEventArguments):
-        nonlocal env
-        nonlocal current_keys_down
-        nonlocal keys2action
-        if e.action.keydown:
-            if e.key == "q":
-                timer.cancel()
-                ui.navigate.to("/")
-            elif (map_to_pygame_key_codes(e.key),) in keys2action.keys():
-                current_keys_down.add(map_to_pygame_key_codes(e.key))
-        if e.action.keyup:
-            if (map_to_pygame_key_codes(e.key),) in keys2action.keys():
-                current_keys_down.remove(map_to_pygame_key_codes(e.key))
-
-    # TODO(Lars): put in different file
-    canvas_script = '''
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-    const imageData = ctx.createImageData(800, 1050);
-
-    function updateCanvas(base64Data) {
-        const binaryData = atob(base64Data);  // Decode Base64 string to binary
-        var pixelData = new Uint8ClampedArray(binaryData.length);
-        for (let i = 0; i < binaryData.length; i++) {
-            pixelData[i] = binaryData.charCodeAt(i);  // Convert binary string to byte array
-        }
-        imageData.data.set(pixelData);  // Set pixel data on canvas
-        ctx.putImageData(imageData, 0, 0);  // Render to canvas
-    };
-    '''
-
-    ui.add_head_html("<style>body {background-color: black;}</style>")
-    ui.add_body_html(f"<canvas id='gameCanvas' style='border: 1px solid black;' width=800px height=1050px/><script>{canvas_script}</script>")
     ui.keyboard(on_key=handle_key)
 
 
