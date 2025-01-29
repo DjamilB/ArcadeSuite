@@ -30,6 +30,7 @@ class Selection:
 
             ui.keyboard(on_key=self.handle_selection_keys)
 
+        # TODO(lars): Allow for multiplayer options
         @ui.page("/selection/Agents")
         def agents():
             self._agent_cards = list()
