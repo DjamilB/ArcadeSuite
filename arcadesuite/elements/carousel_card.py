@@ -12,7 +12,7 @@ class CarouselCard(SelectableCard):
 
         with self:
             with ui.row():
-                ui.label(name)
+                self.label = ui.label(name)
                 self._key_label = ui.label(self._keys[0])
 
     def next(self):
@@ -22,3 +22,6 @@ class CarouselCard(SelectableCard):
 
     def get_current(self):
         return self._items[self._keys[self._index]]
+
+    def get_text(self):
+        return self.label.text

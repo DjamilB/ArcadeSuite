@@ -30,7 +30,6 @@ class Selection:
 
             ui.keyboard(on_key=self.handle_selection_keys)
 
-        # TODO(lars): Allow for multiplayer options
         @ui.page("/selection/Agents")
         def agents():
             self._agent_cards = list()
@@ -38,13 +37,23 @@ class Selection:
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
                 with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
                     self._agent_cards.append(elements.CarouselCard("Player1", {"Player": "Player", "Agent": "Agent"}))
-                    if self.is_agent:
+                    if self.p1_is_agent:
                         self._agent_cards[-1].next()
                     self._agent_cards.append(elements.LabelCard("Select Agent"))
-                    if not self.is_agent:
+                    if not self.p1_is_agent:
                         self._agent_cards[-1].deactivate()
-                    if self.agent_path != "":
-                        self._agent_cards[-1].set_text(f"Agent: {self.agent_path}")
+                    if self.p1_agent_path != "":
+                        self._agent_cards[-1].set_text(f"Agent: {self.p1_agent_path}")
+
+                    if self.meta["multiplayer"]:
+                        self._agent_cards.append(elements.CarouselCard("Player2", {"Player": "Player", "Agent": "Agent"}))
+                        if self.p2_is_agent:
+                            self._agent_cards[-1].next()
+                        self._agent_cards.append(elements.LabelCard("Select Agent"))
+                        if not self.p2_is_agent:
+                            self._agent_cards[-1].deactivate()
+                        if self.p2_agent_path != "":
+                            self._agent_cards[-1].set_text(f"Agent: {self.p2_agent_path}")
                     self._agent_cards.append(elements.LabelCard("Submit"))
 
             if os.path.isfile(f"../res/{self.selected_game}/icon.png"):
@@ -96,8 +105,10 @@ class Selection:
         self.selected_game = game
         self.meta = get_json(f"../res/{game}/meta.json")
         self.selected_modifs = []
-        self.is_agent = False
-        self.agent_path = ""
+        self.p1_is_agent = False
+        self.p2_is_agent = False
+        self.p1_agent_path = ""
+        self.p2_agent_path = ""
 
         self.modifs = list()
         for modif in self.meta["modifs"]:
@@ -124,7 +135,7 @@ class Selection:
                 ui.navigate.to("/")
             elif e.key == "Enter":
                 if self._selection_cards[self._current_selection_index].get_text() == "Play":
-                    self._game_page.populate(self.selected_game, self.selected_modifs, self.is_agent, self.agent_path)
+                    self._game_page.populate(self.selected_game, self.selected_modifs, self.p1_is_agent, self.p1_agent_path)
                     ui.navigate.to("/game_page")
                 else:
                     ui.navigate.to(f"/selection/{self._selection_cards[self._current_selection_index].get_text()}")
@@ -153,11 +164,21 @@ class Selection:
             elif e.key == "Enter":
                 if isinstance(self._agent_cards[self._current_agent_index], elements.CarouselCard):
                     self._agent_cards[self._current_agent_index].next()
-                    self.is_agent = self._agent_cards[self._current_agent_index].get_current() == "Agent"
-                    if self.is_agent:
-                        self._agent_cards[self._current_agent_index + 1].activate()
+
+                    if self._agent_cards[self._current_agent_index].get_text() == "Player1":
+                        self.is_p1 = True
+                        self.p1_is_agent = self._agent_cards[self._current_agent_index].get_current() == "Agent"
+                        if self.p1_is_agent:
+                            self._agent_cards[self._current_agent_index + 1].activate()
+                        else:
+                            self._agent_cards[self._current_agent_index + 1].deactivate()
                     else:
-                        self._agent_cards[self._current_agent_index + 1].deactivate()
+                        self.is_p1 = False
+                        self.p2_is_agent = self._agent_cards[self._current_agent_index].get_current() == "Agent"
+                        if self.p2_is_agent:
+                            self._agent_cards[self._current_agent_index + 1].activate()
+                        else:
+                            self._agent_cards[self._current_agent_index + 1].deactivate()
                 elif self._agent_cards[self._current_agent_index].get_text() == "Submit":
                     ui.navigate.to("/selection")
                 elif "Agent" in self._agent_cards[self._current_agent_index].get_text():
@@ -186,7 +207,10 @@ class Selection:
                         break
             elif e.key == "Enter":
                 text = self._agent_path_cards[self._current_agent_path_index].get_text()
-                self.agent_path = f"../models/{self.selected_game}/0/{text}"
+                if self.is_p1:
+                    self.p1_agent_path = f"../models/{self.selected_game}/0/{text}"
+                else:
+                    self.p2_agent_path = f"../models/{self.selected_game}/0/{text}"
                 ui.navigate.to("/selection/Agents")
 
         self._agent_path_cards[prev_index].unselect()
