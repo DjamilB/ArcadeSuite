@@ -14,3 +14,6 @@ class CheckboxCard(SelectableCard):
 
     def get_value(self):
         return self._checkbox.value
+
+    def get_text(self):
+        return self._checkbox.text

@@ -7,6 +7,9 @@ class GameCard(SelectableCard):
         super().__init__(*args, **kwargs)
 
         with self:
-            ui.label(name)
+            self.label = ui.label(name)
             if icon_path != "":
                 ui.image(icon_path)
+
+    def get_text(self):
+        return self.label.text
