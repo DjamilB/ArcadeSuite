@@ -160,14 +160,14 @@ class Selection:
                         self._agent_cards[self._current_agent_index + 1].deactivate()
                 elif self._agent_cards[self._current_agent_index].get_text() == "Submit":
                     ui.navigate.to("/selection")
-                elif self._agent_cards[self._current_agent_index].get_text() == "Select Agent":
+                elif "Agent" in self._agent_cards[self._current_agent_index].get_text():
                     ui.navigate.to("/selection/Agents/path")
 
         self._agent_cards[prev_index].unselect()
         self._agent_cards[self._current_agent_index].select()
 
     def handle_agent_path_keys(self, e: KeyEventArguments):
-        prev_index = self._current_agent_index
+        prev_index = self._current_agent_path_index
         if e.action.keydown:
             if e.key.arrow_up:
                 while True:
