@@ -1,6 +1,7 @@
 from nicegui import ui
 from nicegui.events import KeyEventArguments
 from hackatari import HackAtari
+from pettingzoo.atari.base_atari_env import BaseAtariEnv
 from ocatari.utils import load_agent
 import torch
 import numpy as np
@@ -35,26 +36,36 @@ class GamePage:
             ui.add_body_html(f"<canvas id='gameCanvas' style='border: 1px solid black;' width=800px height=1050px/><script>{canvas_script}</script>")
             ui.keyboard(on_key=self.handle_key)
 
-    def populate(self, game, modifs, is_agent, agent_path):
-        self.is_agent = is_agent
+    def populate(self, game, modifs, p1_is_agent, p1_agent_path, p2_is_agent=False, p2_agent_path=""):
+        self.p1_is_agent = p1_is_agent
+        self.p2_is_agent = p2_is_agent
 
         # create HackAtari environment
         obs_mode = "obj"
-        if is_agent:
-            if agent_path.find("dqn", 0, len(agent_path)) != -1:
+        if p1_is_agent:
+            if p1_agent_path.find("dqn", 0, len(p1_agent_path)) != -1:
                 obs_mode = "dqn"
-            elif agent_path.find("c51", 0, len(agent_path)) != -1:
+            elif p1_agent_path.find("c51", 0, len(p1_agent_path)) != -1:
                 obs_mode = "dqn"
 
-        self.env = HackAtari(game,
-            modifs=modifs,
-            render_mode="rgb_array",
-            dopamine_pooling=False,
-            full_action_space=False,
-            obs_mode=obs_mode)
+        if p1_is_agent and p2_is_agent:
+            self.env = BaseAtariEnv(game=game.lower(), num_players=2, mode_num=None)
+        else:
+            self.env = HackAtari(game,
+                                 modifs=modifs,
+                                 render_mode="rgb_array",
+                                 dopamine_pooling=False,
+                                 full_action_space=False,
+                                 obs_mode=obs_mode)
 
-        if is_agent:
-            _, self.policy = load_agent(agent_path, self.env, "cpu")
+        self.policies = list([None, None])
+
+        if p1_is_agent:
+            _, self.policies[0] = load_agent(p1_agent_path, self.env, "cpu")
+
+        if p2_is_agent:
+            _, self.policies[1] = load_agent(p2_agent_path, self.env, "cpu")
+
         self.obs, _ = self.env.reset()
         self.nstep = 1
         self.tr = 0
@@ -77,18 +88,26 @@ class GamePage:
             if (map_to_pygame_key_codes(e.key),) in self.keys2action.keys():
                 self.current_keys_down.remove(map_to_pygame_key_codes(e.key))
 
+    # TODO(lars): finish multiplayer support
     async def step_game(self):
         self.pressed_keys = list(self.current_keys_down)
         self.pressed_keys.sort()
         self.pressed_keys = tuple(self.pressed_keys)
-        if not self.is_agent:
+        if not self.p1_is_agent and not self.p2_is_agent:
             if self.pressed_keys in self.keys2action.keys():
                 action = self.keys2action[self.pressed_keys]
             else:
                 action = 0
+            self.obs, reward, terminated, truncated, info = self.env.step(action)
+        elif self.p1_is_agent and not self.p2_is_agent:
+            action = self.policies[0](torch.Tensor(self.obs).unsqueeze(0))[0]
+            self.obs, reward, terminated, truncated, info = self.env.step(action)
+            print(action)
         else:
-            action = self.policy(torch.Tensor(self.obs).unsqueeze(0))[0]
-        self.obs, reward, terminated, truncated, info = self.env.step(action)
+            action = self.policies[0](torch.Tensor(self.obs).unsqueeze(0))[0]
+            self.obs, reward, terminated, truncated, info = self.env.step(action)
+            action = self.policies[1](torch.Tensor(self.obs).unsqueeze(0))[0]
+            self.obs, reward, terminated, truncated, info = self.env.step(action)
         self.tr += reward
         if terminated or truncated:
             print(info)
