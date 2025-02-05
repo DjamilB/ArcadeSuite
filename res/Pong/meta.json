@@ -1,0 +1,13 @@
+{
+	"multiplayer": true,
+	"modifs": {
+		"lazy enemy": "le",
+        "drift": {
+            "up": "ud",
+            "down": "dd",
+            "right": "rd",
+            "left": "ld"
+        }
+	},
+	"img_url": "https://ale.farama.org/_images/pong.gif"
+}

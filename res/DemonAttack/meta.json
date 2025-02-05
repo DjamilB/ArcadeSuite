@@ -1,0 +1,8 @@
+{
+    "multiplayer": false,
+    "modifs": {
+        "static enemies": "se",
+        "one missile": "om"
+    },
+    "img_url": "https://ale.farama.org/_images/demon_attack.gif"
+}  

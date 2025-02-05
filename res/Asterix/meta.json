@@ -1,9 +1,10 @@
 {
-  "multiplayer": true,
-  "modifs": {
-    "obelix": "o",
-    "unlimited_lives": "ul",
-    "even_lines_free": "elf",
-    "odd_lines_free": "olf"
-  }
+    "multiplayer": true,
+    "modifs": {
+        "obelix": "o",
+        "unlimited lives": "ul",
+        "even lines free": "elf",
+        "odd lines free": "olf"
+    },
+    "img_url": "https://ale.farama.org/_images/asterix.gif"
 }

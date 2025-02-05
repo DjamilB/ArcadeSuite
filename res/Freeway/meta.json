@@ -1,0 +1,17 @@
+{
+    "multiplayer": false,
+    "modifs": {
+        "stop random car": "src",
+        "align all cars": "aac",
+        "stop all cars": "sac",
+        "all_cars": {
+            "black": "abc",
+            "white": "awc",
+            "red": "arc",
+            "green": "agc",
+            "blue": "alc"
+        }
+
+    },
+    "img_url": "https://ale.farama.org/_images/freeway.gif"
+}

@@ -1,0 +1,21 @@
+{
+	"multiplayer": false,
+	"modifs": {
+		"disable monkeys": "dm",
+        "disable_coconut": "dc",
+        "disable_thrown_coconut": "dtc",
+        "unlimited_time": "ut",
+        "set_kangaroo_position": {
+            "floor1": "skpf1",
+            "floor2": "skpf2",
+            "random": "skpr"
+        },
+        "change_level": {
+            "0": "cl0",
+            "1": "cl1",
+            "2": "cl2"
+        }
+	},
+	"img_url": "https://ale.farama.org/_images/falaxian.gif",
+    "_comment": "last option for set_kangaroo_position is randomize_kangaroo_position"
+}

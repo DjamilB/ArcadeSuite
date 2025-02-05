@@ -1,0 +1,16 @@
+{
+    "multiplayer": false,
+    "modifs": {
+        "no last line": "nll",
+        "jets only": "jo",
+        "random enemies": "re",
+        "speed mode": {
+            "slow": "sms",
+            "medium": "smm",
+            "fast": "smf",
+            "ultrafast": "smuf"
+        }
+    },
+    "img_url": "https://ale.farama.org/_images/atlantis.gif"
+}
+  

@@ -1,0 +1,26 @@
+{
+	"multiplayer": false,
+	"modifs": {
+		"recolor ice black": {
+            "black": "rib",
+            "red": "rir",
+            "blue": "ribl",
+            "green": "rig"
+        },
+        "ui color": {
+            "bleck": "uicb",
+            "red": "uicr"
+        },
+        "reposition floes": {
+            "easy": "rfe",
+            "medium": "rfm",
+            "hard": "rfh"
+        },
+        "no birds": "nb",
+        "enemies": {
+            "few": "fe",
+            "many": "me"
+        }
+	},
+	"img_url": "https://ale.farama.org/_images/frostbite.gif"
+}

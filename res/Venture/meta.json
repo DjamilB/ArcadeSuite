@@ -1,0 +1,17 @@
+{
+	"multiplayer": false,
+	"modifs": {
+        "enemy color": {
+            "black": "ecb",
+            "white": "ecw",
+            "red": "ecr",
+            "blue": "ecbl",
+            "green": "ecg",
+            "random": "ecrand"
+        },
+        "reset enemy colors": "rec"
+        
+	},
+    "_comment": "#TODO: not sure where to place random_enemy_colors",
+	"img_url": "https://ale.farama.org/_images/venture.gif"
+}

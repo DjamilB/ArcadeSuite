@@ -1,0 +1,28 @@
+{
+    "multiplayer": false,
+    "modifs": {
+      "player color": { 
+          "white": "pcw",
+          "green": "pcg",
+          "red": "pcr",
+          "yellow": "pcy",
+          "purple": "pcp",
+            "blue": "pcb"
+       },
+       "enemy color": { 
+          "white": "ecw",
+          "green": "ecg",
+          "red": "ecr",
+          "yellow": "ecy",
+          "purple": "ecp",
+            "blue": "ecb"
+       },
+       "drift strength": { 
+          "no drift": "s0",
+          "normal drift": "s1",
+          "strong drift": "s2"
+       }
+    },
+    "img_url": "https://ale.farama.org/_images/double_dunk.gif"
+}
+  

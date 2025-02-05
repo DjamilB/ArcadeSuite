@@ -1,0 +1,12 @@
+{
+	"multiplayer": false,
+	"modifs": {
+        "static enemy position": "sep",
+        "disable enemy movement": "dem",
+        "disable block movement": "dbm",
+
+        "reset enemy colors": "rec"
+        
+	},
+	"img_url": "https://ale.farama.org/_images/yars_revenge.gif"
+}

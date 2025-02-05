@@ -1,0 +1,17 @@
+{
+	"multiplayer": true,
+	"modifs": {
+		"disable shield": {
+            "left": "dsl",
+            "middle": "dsm",
+            "right": "dsr"
+        },
+        "relocate shield": {
+            "slight left": "rssl",
+            "off by one": "rsobo",
+            "right": "rsr"
+        },
+        "controlable_missile": "cm"
+	},
+	"img_url": "https://ale.farama.org/_images/space_invaders.gif"
+}

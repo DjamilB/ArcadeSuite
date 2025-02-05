@@ -1,0 +1,14 @@
+{
+	"multiplayer": false,
+	"modifs": {
+		"static ghosts": "sg",
+        "edible ghosts": "eg",
+        "set_level": {
+            "0": "sl0",
+            "1": "sl1",
+            "2": "sl2"
+        },
+        "end game": "egm"
+	},
+	"img_url": "https://ale.farama.org/_images/ms_pacman.gif"
+}

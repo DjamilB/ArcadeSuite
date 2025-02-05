@@ -1,0 +1,14 @@
+{
+    "multiplayer": true,
+    "modifs": {
+        "shark no movement": { 
+            "easy": "snme",
+            "hard": "snmh"
+        },
+        "shark teleport": "st",
+        "shark speed mode": "ssm",
+        "fish on player side": "fops",
+        "fish in middle": "fim"
+    },
+    "img_url": "https://ale.farama.org/_images/fishing_derby.gif"
+}
