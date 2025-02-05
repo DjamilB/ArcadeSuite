@@ -35,6 +35,7 @@ game_page = pages.GamePage()
 select_page = pages.Selection(game_page)
 
 
+# TODO(lars): make resource/model folder locations program arguments
 @ui.page("/")
 def main_page():
     global cards
