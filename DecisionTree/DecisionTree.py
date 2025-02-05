@@ -3,9 +3,10 @@ from BinaryDotTree import BinaryDotTree
 import graphviz
 
 class DecisionTree:
-    def __init__(self,game,):
+    def __init__(self,game,container):
         self.showPath = True
         self.game = game
+        self.container = container
         self.model = getViper(game)
         self.tree = BinaryDotTree(self.model)
 
@@ -13,21 +14,21 @@ class DecisionTree:
         dot_graph = graphviz.Source(dot_text)
         return dot_graph.pipe(format="svg").decode("utf-8")
 
-    def updateRandom(self, container):
+    def updateRandom(self):
         if self.showPath:
             dot_code = str(self.tree.getRandomPath())
         else:
             dot_code = str(self.tree.getRandomTree())
         
-        container.set_content(self.render_dot(dot_code))
+        self.container.set_content(self.render_dot(dot_code))
 
-    def update(self, container, obs):
+    def update(self, obs):
         if self.showPath:
             dot_code = str(self.tree.getPath(obs))
         else:
             dot_code = str(self.tree.getTree(obs))
         
-        container.set_content(self.render_dot(dot_code))
+        self.container.set_content(self.render_dot(dot_code))
 
     def changeRenderMode(self):
         self.showPath = not self.showPath
