@@ -9,7 +9,7 @@ class GameCard(SelectableCard):
         super().__init__(*args, **kwargs)
 
         with self:
-            path = "../res/games.json"
+            path = "../res/meta.json"
             if os.path.isfile(path):
                 with open(path, "r") as file:
                     meta = json.load(file)
