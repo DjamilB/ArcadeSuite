@@ -11,7 +11,7 @@ import elements
 import pages
 
 
-GAMES = get_games("../res/")
+GAMES = get_games()
 select_index = 0
 select_class = "no-shadow"
 select_color = "bg-light-blue-2"
@@ -42,10 +42,7 @@ def main_page():
     ui.add_head_html("<style>body {background-color: bisque;}</style>")
     with ui.grid(columns=6):
         for game in GAMES:
-            path = ""
-            if os.path.isfile(f"../res/{game}/icon.png"):
-                path = f"../res/{game}/icon.png"
-            cards[game] = elements.GameCard(game, path)
+            cards[game] = elements.GameCard(game)
 
             if game == GAMES[select_index]:
                 cards[game].select()

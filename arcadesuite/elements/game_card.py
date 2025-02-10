@@ -5,16 +5,18 @@ import json
 
 
 class GameCard(SelectableCard):
-    def __init__(self, name, icon_path, *args, **kwargs):
+    def __init__(self, name, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         with self:
-            self.label = ui.label(name)
-            if os.path.isfile(f"../res/{name}/meta.json"):
-                with open(f"../res/{name}/meta.json", "r") as file:
+            path = "../res/games.json"
+            if os.path.isfile(path):
+                with open(path, "r") as file:
                     meta = json.load(file)
-                    if "img_url" in meta:
-                        ui.image(meta["img_url"])
+                    ui.image(meta[name]["img_url"])
+                    ui.label(meta[name]["title"])
+            else:
+                raise FileNotFoundError(f"The file {path} does not exist.")
 
 
     def get_text(self):

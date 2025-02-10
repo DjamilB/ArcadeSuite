@@ -1,8 +1,0 @@
-{
-    "multiplayer": true,
-    "modifs": {
-        "change enemy": "ce",
-        "change player": "cp"
-    },
-    "img_url": "https://ale.farama.org/_images/amidar.gif"
-}

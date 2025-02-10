@@ -1,0 +1,400 @@
+{
+    "ChopperCommand": {
+        "multiplayer": false,
+        "modifs": {
+            "delay shots": "ds",
+            "no enemies": "ne",
+            "no_radar": "nr",
+            "invisible_player": "ip",
+            "color": {
+                "black": "cb",
+                "white": "cw",
+                "red": "cr",
+                "blue": "cl",
+                "green": "cg"
+            }
+        },
+        "img_url": "https://ale.farama.org/_images/chopper_command.gif",
+        "title": "Chopper Command"
+    },
+    "NameThisGame": {
+        "multiplayer": false,
+        "modifs": {
+            "endless oxygen": "eo",
+            "infinite lives": "il",
+            "double wave length": "dwl",
+            "quick start": "qs",
+            "octopus start": "os",
+            "octopus rest": "or"
+        },
+        "img_url": "https://ale.farama.org/_images/name_this_game.gif",
+        "title": "Name This Game"
+    },
+    "MsPacman": {
+        "multiplayer": false,
+        "modifs": {
+            "static ghosts": "sg",
+            "edible ghosts": "eg",
+            "set_level": {
+                "0": "sl0",
+                "1": "sl1",
+                "2": "sl2"
+            },
+            "end game": "egm"
+        },
+        "img_url": "https://ale.farama.org/_images/ms_pacman.gif",
+        "title": "Ms. Pacman"
+    },
+    "BankHeist": {
+        "multiplayer": false,
+        "modifs": {
+            "no last line": "nll",
+            "jets only": "jo",
+            "random enemies": "re",
+            "speed mode": {
+                "slow": "sms",
+                "medium": "smm",
+                "fast": "smf",
+                "ultrafast": "smuf"
+            }
+        },
+        "img_url": "https://ale.farama.org/_images/bank_heist.gif",
+        "title": "Bank Heist"
+    },
+    "Asterix": {
+        "multiplayer": true,
+        "modifs": {
+            "obelix": "o",
+            "unlimited lives": "ul",
+            "even lines free": "elf",
+            "odd lines free": "olf"
+        },
+        "img_url": "https://ale.farama.org/_images/asterix.gif",
+        "title": "Asterix"
+    },
+    "FishingDerby": {
+        "multiplayer": true,
+        "modifs": {
+            "shark no movement": {
+                "easy": "snme",
+                "hard": "snmh"
+            },
+            "shark teleport": "st",
+            "shark speed mode": "ssm",
+            "fish on player side": "fops",
+            "fish in middle": "fim"
+        },
+        "img_url": "https://ale.farama.org/_images/fishing_derby.gif",
+        "title": "Fishing Derby"
+    },
+    "DemonAttack": {
+        "multiplayer": false,
+        "modifs": {
+            "static enemies": "se",
+            "one missile": "om"
+        },
+        "img_url": "https://ale.farama.org/_images/demon_attack.gif",
+        "title": "Demon Attack"
+    },
+    "Riverraid": {
+        "multiplayer": false,
+        "modifs": {
+            "no fuel": "nf"
+        },
+        "img_url": "https://ale.farama.org/_images/riverraid.gif",
+        "title": "River Raid"
+    },
+    "YarsRevenge": {
+        "multiplayer": false,
+        "modifs": {
+            "static enemy position": "sep",
+            "disable enemy movement": "dem",
+            "disable block movement": "dbm",
+            "reset enemy colors": "rec"
+        },
+        "img_url": "https://ale.farama.org/_images/yars_revenge.gif",
+        "title": "Yars' Revenge"
+    },
+    "Carnival": {
+        "multiplayer": false,
+        "modifs": {
+            "no flying ducks": "nfd",
+            "unlimited_ammo": "ua",
+            "missile speed increase": {
+                "small": "mssi",
+                "medium": "mssm",
+                "large": "mssl"
+            }
+        },
+        "img_url": "https://ale.farama.org/_images/carnival.gif",
+        "title": "Carnival"
+    },
+    "Freeway": {
+        "multiplayer": false,
+        "modifs": {
+            "stop random car": "src",
+            "align all cars": "aac",
+            "stop all cars": "sac",
+            "all_cars": {
+                "black": "abc",
+                "white": "awc",
+                "red": "arc",
+                "green": "agc",
+                "blue": "alc"
+            }
+        },
+        "img_url": "https://ale.farama.org/_images/freeway.gif",
+        "title": "Freeway"
+    },
+    "Skiing": {
+        "multiplayer": false,
+        "modifs": {
+            "modify ram invert flag": "mrif"
+        },
+        "img_url": "https://ale.farama.org/_images/skiing.gif",
+        "title": "Skiing"
+    },
+    "Breakout": {
+        "multiplayer": true,
+        "modifs": {
+            "drift direction": {
+                "right": "dr",
+                "left": "dl"
+            },
+            "drift strength": {
+                "no drift": "s0",
+                "normal drift": "s1",
+                "strong drift": "s2"
+            }
+        },
+        "_comment": "not sure if multiplayer is possible",
+        "img_url": "https://ale.farama.org/_images/breakout.gif",
+        "title": "Breakout"
+    },
+    "Amidar": {
+        "multiplayer": true,
+        "modifs": {
+            "change enemy": "ce",
+            "change player": "cp"
+        },
+        "img_url": "https://ale.farama.org/_images/amidar.gif",
+        "title": "Amidar"
+    },
+    "Tennis": {
+        "multiplayer": true,
+        "modifs": {
+            "wind effect": "we",
+            "always pitches": {
+                "upper": "aup",
+                "lower": "alo"
+            },
+            "always player": {
+                "upper": "aup",
+                "lower": "alo"
+            }
+        },
+        "img_url": "https://ale.farama.org/_images/tennis.gif",
+        "title": "Tennis"
+    },
+    "Pong": {
+        "multiplayer": true,
+        "modifs": {
+            "lazy enemy": "le",
+            "drift": {
+                "up": "ud",
+                "down": "dd",
+                "right": "rd",
+                "left": "ld"
+            }
+        },
+        "img_url": "https://ale.farama.org/_images/pong.gif",
+        "title": "Pong"
+    },
+    "Venture": {
+        "multiplayer": false,
+        "modifs": {
+            "enemy color": {
+                "black": "ecb",
+                "white": "ecw",
+                "red": "ecr",
+                "blue": "ecbl",
+                "green": "ecg",
+                "random": "ecrand"
+            },
+            "reset enemy colors": "rec"
+        },
+        "_comment": "#TODO: not sure where to place random_enemy_colors",
+        "img_url": "https://ale.farama.org/_images/venture.gif",
+        "title": "Venture"
+    },
+    "Seaquest": {
+        "multiplayer": true,
+        "modifs": {
+            "gravity": "g",
+            "disable enemies": "de",
+            "is gamestart": "ig",
+            "unlimited oxygen": "uo",
+            "random color enemies": "rce"
+        },
+        "img_url": "https://ale.farama.org/_images/seaquest.gif",
+        "title": "Seaquest"
+    },
+    "Frostbite": {
+        "multiplayer": false,
+        "modifs": {
+            "recolor ice black": {
+                "black": "rib",
+                "red": "rir",
+                "blue": "ribl",
+                "green": "rig"
+            },
+            "ui color": {
+                "bleck": "uicb",
+                "red": "uicr"
+            },
+            "reposition floes": {
+                "easy": "rfe",
+                "medium": "rfm",
+                "hard": "rfh"
+            },
+            "no birds": "nb",
+            "enemies": {
+                "few": "fe",
+                "many": "me"
+            }
+        },
+        "img_url": "https://ale.farama.org/_images/frostbite.gif",
+        "title": "Frostbite"
+    },
+    "Boxing": {
+        "multiplayer": true,
+        "modifs": {
+            "drunken boxing": "db",
+            "one armed": "oa"
+        },
+        "_comment": "gravity modif deleted for now cause it's broken",
+        "img_url": "https://ale.farama.org/_images/boxing.gif",
+        "title": "Boxing"
+    },
+    "SpaceInvaders": {
+        "multiplayer": true,
+        "modifs": {
+            "disable shield": {
+                "left": "dsl",
+                "middle": "dsm",
+                "right": "dsr"
+            },
+            "relocate shield": {
+                "slight left": "rssl",
+                "off by one": "rsobo",
+                "right": "rsr"
+            },
+            "controlable_missile": "cm"
+        },
+        "img_url": "https://ale.farama.org/_images/space_invaders.gif",
+        "title": "Space Invaders"
+    },
+    "Galaxian": {
+        "multiplayer": false,
+        "modifs": {
+            "disable monkeys": "dm",
+            "disable_coconut": "dc",
+            "disable_thrown_coconut": "dtc",
+            "unlimited_time": "ut",
+            "set_kangaroo_position": {
+                "floor1": "skpf1",
+                "floor2": "skpf2",
+                "random": "skpr"
+            },
+            "change_level": {
+                "0": "cl0",
+                "1": "cl1",
+                "2": "cl2"
+            }
+        },
+        "img_url": "https://ale.farama.org/_images/galaxian.gif",
+        "_comment": "last option for set_kangaroo_position is randomize_kangaroo_position",
+        "title": "Galaxian"
+    },
+    "Atlantis": {
+        "multiplayer": false,
+        "modifs": {
+            "no last line": "nll",
+            "jets only": "jo",
+            "random enemies": "re",
+            "speed mode": {
+                "slow": "sms",
+                "medium": "smm",
+                "fast": "smf",
+                "ultrafast": "smuf"
+            }
+        },
+        "img_url": "https://ale.farama.org/_images/atlantis.gif",
+        "title": "Atlantis"
+    },
+    "DonkeyKong": {
+        "multiplayer": false,
+        "modifs": {
+            "no barrel": "nb",
+            "unlimited time": "ut",
+            "change level": {
+                "0": "cl0",
+                "1": "cl1",
+                "2": "cl2"
+            },
+            "random start step": "rss"
+        },
+        "img_url": "https://ale.farama.org/_images/donkey_kong.gif",
+        "title": "Donkey Kong"
+    },
+    "DoubleDunk": {
+        "multiplayer": false,
+        "modifs": {
+            "player color": {
+                "white": "pcw",
+                "green": "pcg",
+                "red": "pcr",
+                "yellow": "pcy",
+                "purple": "pcp",
+                "blue": "pcb"
+            },
+            "enemy color": {
+                "white": "ecw",
+                "green": "ecg",
+                "red": "ecr",
+                "yellow": "ecy",
+                "purple": "ecp",
+                "blue": "ecb"
+            },
+            "drift strength": {
+                "no drift": "s0",
+                "normal drift": "s1",
+                "strong drift": "s2"
+            }
+        },
+        "img_url": "https://ale.farama.org/_images/double_dunk.gif",
+        "title": "Double Dunk"
+    },
+    "MontezumaRevenge": {
+        "multiplayer": false,
+        "modifs": {
+            "random position start": "rps",
+            "set level": {
+                "0": "sl0",
+                "1": "sl1",
+                "2": "sl2",
+                "3": "sl3",
+                "4": "sl4",
+                "5": "sl5",
+                "6": "sl6",
+                "7": "sl7",
+                "8": "sl8"
+            },
+            "randomize items": "ri",
+            "full inventory": "fi"
+        },
+        "img_url": "https://ale.farama.org/_images/montezuma_revenge.gif",
+        "_comment": "#TODO: unify_item_color takes a second argument, which is color_index",
+        "title": "Montezuma's Revenge"
+    }
+}

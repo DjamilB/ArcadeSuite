@@ -1,9 +1,0 @@
-{
-    "multiplayer": true,
-    "modifs": {
-        "drunken boxing": "db",
-        "one armed": "oa"
-    },
-    "_comment": "gravity modif deleted for now cause it's broken",
-    "img_url": "https://ale.farama.org/_images/boxing.gif"
-}

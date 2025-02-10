@@ -103,7 +103,8 @@ class Selection:
 
     def set_selected_game(self, game):
         self.selected_game = game
-        self.meta = get_json(f"../res/{game}/meta.json")
+        # self.meta = get_json(f"../res/{game}/meta.json")
+        self.meta = get_json(f"../res/meta.json")[game]
         self.selected_modifs = []
         self.p1_is_agent = False
         self.p2_is_agent = False
