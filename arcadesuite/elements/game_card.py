@@ -14,7 +14,7 @@ class GameCard(SelectableCard):
                 with open(path, "r") as file:
                     meta = json.load(file)
                     ui.image(meta[name]["img_url"])
-                    ui.label(meta[name]["title"])
+                    ui.label(meta[name]["title"]).style('text-align: center; display: block; width: 100%')
             else:
                 raise FileNotFoundError(f"The file {path} does not exist.")
 
