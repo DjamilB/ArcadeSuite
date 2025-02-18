@@ -24,8 +24,7 @@ class Selection:
                     self._selection_cards.append(elements.LabelCard("Modifiers"))
                     self._selection_cards.append(elements.LabelCard("Play"))
 
-            if os.path.isfile(f"../res/{self.selected_game}/icon.png"):
-                ui.image(f"../res/{self.selected_game}/icon.png").props("fit='contain'").classes("absolute-right h-full w-[50%]")
+                ui.image(self.meta["img_url"]).props("fit='contain'").classes("absolute-right h-full w-[50%]")
             self._selection_cards[self._current_selection_index].select()
 
             ui.keyboard(on_key=self.handle_selection_keys)
@@ -56,8 +55,7 @@ class Selection:
                             self._agent_cards[-1].set_text(f"Agent: {self.p2_agent_path}")
                     self._agent_cards.append(elements.LabelCard("Submit"))
 
-            if os.path.isfile(f"../res/{self.selected_game}/icon.png"):
-                ui.image(f"../res/{self.selected_game}/icon.png").props("fit='contain'").classes("absolute-right h-full w-[50%]")
+            ui.image(self.meta["img_url"]).props("fit='contain'").classes("absolute-right h-full w-[50%]")
             self._agent_cards[self._current_agent_index].select()
 
             ui.keyboard(on_key=self.handle_agent_keys)
@@ -73,8 +71,7 @@ class Selection:
                     for agent in self.agents:
                         self._agent_path_cards.append(elements.LabelCard(agent))
 
-            if os.path.isfile(f"../res/{self.selected_game}/icon.png"):
-                ui.image(f"../res/{self.selected_game}/icon.png").props("fit='contain'").classes("absolute-right h-full w-[50%]")
+            ui.image(self.meta["img_url"]).props("fit='contain'").classes("absolute-right h-full w-[50%]")
             self._agent_path_cards[self._current_agent_path_index].select()
 
             ui.keyboard(on_key=self.handle_agent_path_keys)
@@ -95,8 +92,7 @@ class Selection:
                                 self._modif_cards[-1].toggle_box()
                     self._modif_cards.append(elements.LabelCard("Submit").classes("q-pa-sm"))
 
-            if os.path.isfile(f"../res/{self.selected_game}/icon.png"):
-                ui.image(f"../res/{self.selected_game}/icon.png").props("fit='contain'").classes("absolute-right h-full w-[50%]")
+            ui.image(self.meta["img_url"]).props("fit='contain'").classes("absolute-right h-full w-[50%]")
             self._modif_cards[self._current_modif_index].select()
 
             ui.keyboard(on_key=self.handle_modif_keys)
