@@ -10,37 +10,28 @@ import os
 import elements
 import pages
 
-
-GAMES = get_games()
-select_index = 0
-select_class = "no-shadow"
-select_color = "bg-light-blue-2"
-normal_color = "bg-grey-1"
-
-selection_index = 0
-
-selected_game = GAMES[0]
-modif_selection = list()
-
-player_agent_selection = []
-
-cards = dict()
-
+CARD_COLUMNS = 6
 
 # Uncomment to open Web Inspector
 # app.native.start_args["debug"] = True
 
-
 game_page = pages.GamePage()
 select_page = pages.Selection(game_page)
+
+select_index = 0
 
 
 # TODO(lars): make resource/model folder locations program arguments
 @ui.page("/")
 def main_page():
-    global cards
+    global select_index
+
+    GAMES = get_games()
+    selected_game = GAMES[select_index]
+    cards = dict()
+
     ui.add_head_html("<style>body {background-color: bisque;}</style>")
-    with ui.grid(columns=6):
+    with ui.grid(columns=CARD_COLUMNS):
         for game in GAMES:
             cards[game] = elements.GameCard(game)
 
@@ -62,6 +53,12 @@ def main_page():
                     select_index += 1
                 else:
                     select_index = 0
+            elif e.key.arrow_up:
+                if select_index >= CARD_COLUMNS:
+                    select_index -= CARD_COLUMNS
+            elif e.key.arrow_down:
+                if select_index <= len(GAMES) - 1 - CARD_COLUMNS:
+                    select_index += CARD_COLUMNS
             elif e.key == "Enter":
                 select_page.set_selected_game(selected_game)
                 ui.navigate.to("/selection")
