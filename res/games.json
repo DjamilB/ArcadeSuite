@@ -1,30 +1,33 @@
 {
     "games": [
-        "ChopperCommand",
-        "NameThisGame",
         "MsPacman",
         "BankHeist",
         "Asterix",
         "FishingDerby",
-        "DemonAttack",
-        "Riverraid",
-        "YarsRevenge",
-        "Carnival",
         "Freeway",
         "Skiing",
         "Breakout",
         "Amidar",
         "Tennis",
         "Pong",
-        "Venture",
         "Seaquest",
         "Frostbite",
         "Boxing",
         "SpaceInvaders",
-        "Galaxian",
         "Atlantis",
         "DonkeyKong",
         "DoubleDunk",
         "MontezumaRevenge"
+    ],
+    "_comment": [
+      "The following games have been temporarily removed due to not being functional", 
+      "ChopperCommand",
+      "NameThisGame",
+      "DemonAttack",
+      "Riverraid",
+      "YarsRevenge",
+      "Carnival",
+      "Venture",
+      "Galaxian"
     ]
 }
