@@ -55,7 +55,7 @@ class GamePage:
                                  modifs=modifs,
                                  render_mode="rgb_array",
                                  dopamine_pooling=False,
-                                 full_action_space=False,
+                                 full_action_space=not p1_is_agent,
                                  obs_mode=obs_mode)
 
         self.policies = list([None, None])
