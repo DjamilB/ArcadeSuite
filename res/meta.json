@@ -2,16 +2,16 @@
     "ChopperCommand": {
         "multiplayer": false,
         "modifs": {
-            "delay shots": "ds",
-            "no enemies": "ne",
-            "no_radar": "nr",
-            "invisible_player": "ip",
-            "color": {
-                "black": "cb",
-                "white": "cw",
-                "red": "cr",
-                "blue": "cl",
-                "green": "cg"
+            "Put time delay between shots": "delay_shots",
+            "Remove all enemies from the game": "no_enemies",
+            "Remove the radar content": "no_radar",
+            "Make the player invisible": "invisible_player",
+            "Change the background and enemies' color": {
+                "Black": "color_black",
+                "White": "color_white",
+                "Red": "color_red",
+                "Blue": "color_blue",
+                "Green": "color_green"
             }
         },
         "img_url": "https://ale.farama.org/_images/chopper_command.gif",
@@ -20,12 +20,12 @@
     "NameThisGame": {
         "multiplayer": false,
         "modifs": {
-            "endless oxygen": "eo",
-            "infinite lives": "il",
-            "double wave length": "dwl",
-            "quick start": "qs",
-            "octopus start": "os",
-            "octopus rest": "or"
+            "Player can no longer run out of oxygen": "endless_oxygen",
+            "Always maximize the treasure value": "infinite_lives",
+            "Double the time of each wave": "double_wave_length",
+            "Skip the intro and starts the game at once": "quick_start",
+            "Add the first lane of tentacles for the octopus": "octopus_start",
+            "Reset the timer for the octopus tentacles": "octopus_rest"
         },
         "img_url": "https://ale.farama.org/_images/name_this_game.gif",
         "title": "Name This Game"
@@ -33,14 +33,14 @@
     "MsPacman": {
         "multiplayer": false,
         "modifs": {
-            "static ghosts": "sg",
-            "edible ghosts": "eg",
-            "set_level": {
-                "0": "sl0",
-                "1": "sl1",
-                "2": "sl2"
+            "Keep ghosts fixed inside the square in the middle of the screen": "static_ghosts",
+            "Ensure all ghosts remain edible indefinitely": "edible_ghosts",
+            "Sets the game level": {
+                "0": "set_level_0",
+                "1": "set_level_1",
+                "2": "set_level_2"
             },
-            "end game": "egm"
+            "Simulate an endgame state by spawning only a small cluster of pills": "end_game"
         },
         "img_url": "https://ale.farama.org/_images/ms_pacman.gif",
         "title": "Ms. Pacman"
@@ -48,15 +48,13 @@
     "BankHeist": {
         "multiplayer": false,
         "modifs": {
-            "no last line": "nll",
-            "jets only": "jo",
-            "random enemies": "re",
-            "speed mode": {
-                "slow": "sms",
-                "medium": "smm",
-                "fast": "smf",
-                "ultrafast": "smuf"
-            }
+            "Provides unlimited gas for all enemies": "unlimited_gas",
+            "Police": {
+                "Removes police from the game": "no_police",
+                "Replaces all banks with police": "only_police"
+            },
+            "Randomize which city is entered next": "random_city",
+            "Allow player to go back to the previous city": "revisit_city"
         },
         "img_url": "https://ale.farama.org/_images/bank_heist.gif",
         "title": "Bank Heist"
@@ -64,10 +62,14 @@
     "Asterix": {
         "multiplayer": true,
         "modifs": {
-            "obelix": "o",
-            "unlimited lives": "ul",
-            "even lines free": "elf",
-            "odd lines free": "olf"
+            "Obelix mode": "obelix",
+            "Set consumable": {
+                "Sets the consumable to pink (100points)": "set_consumable_1",
+                "Sets the consumable to shields (200points)": "set_consumable_2"
+            },
+            "Grant unlimited lives": "unlimited_lives",
+            "Frees even lines in the game": "even_lines_free",
+            "Frees odd lines in the game": "odd_lines_free"
         },
         "img_url": "https://ale.farama.org/_images/asterix.gif",
         "title": "Asterix"
@@ -75,14 +77,16 @@
     "FishingDerby": {
         "multiplayer": true,
         "modifs": {
-            "shark no movement": {
-                "easy": "snme",
-                "hard": "snmh"
+            "Shark mode": {
+                "No movement (easy)": "shark_no_movement_easy",
+                "No movement (hard)": "shark_no_movement_hard",
+                "Teleport": "shark_teleport",
+                "Speed mode": "shark_speed_mode"
             },
-            "shark teleport": "st",
-            "shark speed mode": "ssm",
-            "fish on player side": "fops",
-            "fish in middle": "fim"
+            "Fish mode": {
+                "All fish are on the player's side": "fish_on_player_side",
+                "Fish are always in the middle between player and enemy": "fish_in_middle"
+            }
         },
         "img_url": "https://ale.farama.org/_images/fishing_derby.gif",
         "title": "Fishing Derby"
@@ -90,8 +94,8 @@
     "DemonAttack": {
         "multiplayer": false,
         "modifs": {
-            "static enemies": "se",
-            "one missile": "om"
+            "Make the enemies horizontally static (i.e. constant x position)": "static_enemies",
+            "One missile": "one_missile"
         },
         "img_url": "https://ale.farama.org/_images/demon_attack.gif",
         "title": "Demon Attack"
@@ -99,7 +103,7 @@
     "Riverraid": {
         "multiplayer": false,
         "modifs": {
-            "no fuel": "nf"
+            "Remove the fuel deposits from the game": "no_fuel"
         },
         "img_url": "https://ale.farama.org/_images/riverraid.gif",
         "title": "River Raid"
@@ -107,10 +111,9 @@
     "YarsRevenge": {
         "multiplayer": false,
         "modifs": {
-            "static enemy position": "sep",
-            "disable enemy movement": "dem",
-            "disable block movement": "dbm",
-            "reset enemy colors": "rec"
+            "Make the enemy and the blocks unable to move up and down": "static_enemy_position",
+            "Completely disable enemy movement": "disable_enemy_movement",
+            "Completely disable block movement": "disable_block_movement"
         },
         "img_url": "https://ale.farama.org/_images/yars_revenge.gif",
         "title": "Yars' Revenge"
@@ -118,12 +121,12 @@
     "Carnival": {
         "multiplayer": false,
         "modifs": {
-            "no flying ducks": "nfd",
-            "unlimited_ammo": "ua",
-            "missile speed increase": {
-                "small": "mssi",
-                "medium": "mssm",
-                "large": "mssl"
+            "Ducks in the last row disappear instead of turning into flying ducks": "no_flying_ducks",
+            "Ammunition doesn't decrease": "unlimited_ammo",
+            "Speed increase of the projectiles fire from the player": {
+                "Small": "missile_speed_small_increase",
+                "Medium": "missile_speed_medium_increase",
+                "Large": "missile_speed_large_increase"
             }
         },
         "img_url": "https://ale.farama.org/_images/carnival.gif",
@@ -132,16 +135,21 @@
     "Freeway": {
         "multiplayer": false,
         "modifs": {
-            "stop random car": "src",
-            "align all cars": "aac",
-            "stop all cars": "sac",
-            "all_cars": {
-                "black": "abc",
-                "white": "awc",
-                "red": "arc",
-                "green": "agc",
-                "blue": "alc"
-            }
+            "Stop a random car with a biased probability": "stop_random_car",
+            "Stop all cars based on a biased random decision": "align_all_cars",
+            "Stop all cars and repositions some to predefined positions": "stop_all_cars",
+            "Set color of all cars": {
+                "Black": "all_black_cars",
+                "White": "all_white_cars",
+                "Red": "all_red_cars",
+                "Green": "all_green_cars",
+                "Blue": "all_blue_cars"
+            },
+            "Colors all cars invisible": "invisible_mode",
+            "Each car changes color randomly every timestep": "strobo_mode",
+            "Each car changes color from black to invisible approximately every second": "phantom_mode",
+            "Each car changes color randomly approximately every second": "blinking_mode",
+            "Each car drives with speed 2 (default)": "speed_mode"
         },
         "img_url": "https://ale.farama.org/_images/freeway.gif",
         "title": "Freeway"
@@ -149,7 +157,7 @@
     "Skiing": {
         "multiplayer": false,
         "modifs": {
-            "modify ram invert flag": "mrif"
+            "Invert flag": "modify_ram_invert_flag"
         },
         "img_url": "https://ale.farama.org/_images/skiing.gif",
         "title": "Skiing"
@@ -157,14 +165,27 @@
     "Breakout": {
         "multiplayer": true,
         "modifs": {
-            "drift direction": {
-                "right": "dr",
-                "left": "dl"
+            "Drift direction of the ball": {
+                "Right": "right_drift",
+                "Left": "left_drift"
             },
-            "drift strength": {
-                "no drift": "s0",
-                "normal drift": "s1",
-                "strong drift": "s2"
+            "Gravity effect": {
+                "Pull the ball down": "gravity",
+                "Push the ball up": "inverse_gravity"
+            },
+            "Set color of play and ball": {
+                "Black": "color_player_and_ball_black",
+                "White": "color_player_and_ball_white",
+                "Red": "color_player_and_ball_red",
+                "Blue": "color_player_and_ball_blue",
+                "Green": "color_player_and_ball_green"
+            },
+            "Set color off all blocks": {
+                "Black": "color_all_blocks_black",
+                "White": "color_all_blocks_white",
+                "Red": "color_all_blocks_red",
+                "Blue": "color_all_blocks_blue",
+                "Green": "color_all_blocks_green"
             }
         },
         "_comment": "not sure if multiplayer is possible",
@@ -174,8 +195,8 @@
     "Amidar": {
         "multiplayer": true,
         "modifs": {
-            "change enemy": "ce",
-            "change player": "cp"
+            "Change the enemies to the second version": "change_enemies",
+            "Changes the player to the second version": "change_player"
         },
         "img_url": "https://ale.farama.org/_images/amidar.gif",
         "title": "Amidar"
@@ -183,14 +204,14 @@
     "Tennis": {
         "multiplayer": true,
         "modifs": {
-            "wind effect": "we",
-            "always pitches": {
-                "upper": "aup",
-                "lower": "alo"
+            "Applies a wind effect: moves the ball up and right by 3 pixels per frame": "wind_effect",
+            "Ensure one of the player always pitches": {
+                "Upper player": "always_upper_pitches",
+                "Lower player": "always_lower_pitches"
             },
-            "always player": {
-                "upper": "aup",
-                "lower": "alo"
+            "Ensure one of the player is always on the specified field": {
+                "Player on lower field": "always_lower_player",
+                "Player on upper field": "always_upper_player"
             }
         },
         "img_url": "https://ale.farama.org/_images/tennis.gif",
@@ -199,12 +220,12 @@
     "Pong": {
         "multiplayer": true,
         "modifs": {
-            "lazy enemy": "le",
-            "drift": {
-                "up": "ud",
-                "down": "dd",
-                "right": "rd",
-                "left": "ld"
+            "Enemy does not move after returning the shot": "lazy_enemy",
+            "Makes the ball drift in the specified direction": {
+                "The ball drifts upwards": "up_drift",
+                "The ball drifts down": "down_drift",
+                "The ball drifts right": "right_drift",
+                "The ball drifts left": "left_drift"
             }
         },
         "img_url": "https://ale.farama.org/_images/pong.gif",
@@ -213,54 +234,54 @@
     "Venture": {
         "multiplayer": false,
         "modifs": {
-            "enemy color": {
-                "black": "ecb",
-                "white": "ecw",
-                "red": "ecr",
-                "blue": "ecbl",
-                "green": "ecg",
-                "random": "ecrand"
+            "Changes all enemies to a specified color": {
+                "Black": "enemy_color_black",
+                "White": "enemy_color_white",
+                "Red": "enemy_color_red",
+                "Blue": "enemy_color_blue",
+                "Green": "enemy_color_green",
+                "Random": "random_enemy_colors"
             },
-            "reset enemy colors": "rec"
+            "Reset the enemy colors to new random values": "reset_random_colors"
         },
-        "_comment": "#TODO: not sure where to place random_enemy_colors",
+        "_comment": "#ToDo: not sure where to place random_enemy_colors",
         "img_url": "https://ale.farama.org/_images/venture.gif",
         "title": "Venture"
     },
     "Seaquest": {
         "multiplayer": true,
         "modifs": {
-            "gravity": "g",
-            "disable enemies": "de",
-            "is gamestart": "ig",
-            "unlimited oxygen": "uo",
-            "random color enemies": "rce"
+            "Enable gravity for the player": "gravity",
+            "Disable all the enemies": "disable_enemies",
+            "Change the behavior of the oxygen bar to remain filled": "unlimited_oxygen",
+            "The enemies have new random colors each time they go across the screen": "random_color_enemies"
         },
+        "_comment": "\"Determine if it is the start of the game\nvia the position of the player and the points\": \"is_gamestart\"",
         "img_url": "https://ale.farama.org/_images/seaquest.gif",
         "title": "Seaquest"
     },
     "Frostbite": {
         "multiplayer": false,
         "modifs": {
-            "recolor ice black": {
-                "black": "rib",
-                "red": "rir",
-                "blue": "ribl",
-                "green": "rig"
+            "Adjust the ice floes to a specified color": {
+                "Black": "recolor_ice_black",
+                "Red": "recolor_ice_red",
+                "Blue": "recolor_ice_blue",
+                "Green": "recolor_ice_green"
             },
-            "ui color": {
-                "bleck": "uicb",
-                "red": "uicr"
+            "Adjust the UI to a specified color": {
+                "Black": "ui_color_black",
+                "Red": "ui_color_red"
             },
-            "reposition floes": {
-                "easy": "rfe",
-                "medium": "rfm",
-                "hard": "rfh"
+            "Adjust the position of the ice floes to a specified layout": {
+                "Easy": "reposition_floes_easy",
+                "Medium": "reposition_floes_medium",
+                "Hard": "reposition_floes_hard"
             },
-            "no birds": "nb",
-            "enemies": {
-                "few": "fe",
-                "many": "me"
+            "Set amount of enemies": {
+                "Removes all enemies": "no_birds",
+                "Sets a few enemies (e.g., easy mode)": "few_enemies",
+                "Sets many enemies (e.g., hard mode)": "many_enemies"
             }
         },
         "img_url": "https://ale.farama.org/_images/frostbite.gif",
@@ -269,8 +290,32 @@
     "Boxing": {
         "multiplayer": true,
         "modifs": {
-            "drunken boxing": "db",
-            "one armed": "oa"
+            "Disables the \"hitting motion\" with the right arm permanently": "one_armed",
+            "Move the player character up/down": {
+                "Moves the player character down": "gravity",
+                "Moves the player character up": "antigravity"
+            },
+            "Move the player character forward/backward": {
+                "Moves the player character forward": "offensive",
+                "Moves the player character backward": "defensive"
+            },
+            "Move the player character down in the game environment": "down",
+            "Drunken boxing (apply random movements to the player's inputs)": "drunken_boxing",
+            "Changes the player's color to a specified color": {
+                "Black": "color_player_black",
+                "White": "color_player_white",
+                "Red": "color_player_red",
+                "Blue": "color_player_blue",
+                "Green": "color_player_green"
+            },
+            "Change the enemy's color to a specified color": {
+                "Black": "color_enemy_black",
+                "White": "color_enemy_white",
+                "Red": "color_enemy_red",
+                "Blue": "color_enemy_blue",
+                "Green": "color_enemy_green"
+            },
+            "Switch the position of player and enemy": "switch_positions"
         },
         "_comment": "gravity modif deleted for now cause it's broken",
         "img_url": "https://ale.farama.org/_images/boxing.gif",
@@ -279,54 +324,32 @@
     "SpaceInvaders": {
         "multiplayer": true,
         "modifs": {
-            "disable shield": {
-                "left": "dsl",
-                "middle": "dsm",
-                "right": "dsr"
+            "Disable the left shield": "disable_shield_left",
+            "Disable the middle shield": "disable_shield_middle",
+            "Disable the right shield": "disable_shield_right",
+            "Relocate the shield to a specified position": {
+                "To a low position": "relocate_shield_slight_left",
+                "To a medium postition": "relocate_shield_off_by_one",
+                "To a high position": "relocate_shield_right"
             },
-            "relocate shield": {
-                "slight left": "rssl",
-                "off by one": "rsobo",
-                "right": "rsr"
-            },
-            "controlable_missile": "cm"
+            "Allow the missile to be controlled by setting its position to the player's position": "controlable_missile"
         },
         "img_url": "https://ale.farama.org/_images/space_invaders.gif",
         "title": "Space Invaders"
     },
-    "Galaxian": {
-        "multiplayer": false,
-        "modifs": {
-            "disable monkeys": "dm",
-            "disable_coconut": "dc",
-            "disable_thrown_coconut": "dtc",
-            "unlimited_time": "ut",
-            "set_kangaroo_position": {
-                "floor1": "skpf1",
-                "floor2": "skpf2",
-                "random": "skpr"
-            },
-            "change_level": {
-                "0": "cl0",
-                "1": "cl1",
-                "2": "cl2"
-            }
-        },
-        "img_url": "https://ale.farama.org/_images/galaxian.gif",
-        "_comment": "last option for set_kangaroo_position is randomize_kangaroo_position",
-        "title": "Galaxian"
-    },
     "Atlantis": {
         "multiplayer": false,
         "modifs": {
-            "no last line": "nll",
-            "jets only": "jo",
-            "random enemies": "re",
-            "speed mode": {
-                "slow": "sms",
-                "medium": "smm",
-                "fast": "smf",
-                "ultrafast": "smuf"
+            "Remove enemies from the last (lowest) line": "no_last_line",
+            "Enemy types": {
+                "Replace all enemies with Bandit-Bombers": "jets_only",
+                "Randomly assign enemy types, instead of following the standardized pattern": "random_enemies"
+            },
+            "Set a specified speed mode for all enemy ships": {
+                "Slow": "speed_mode_slow",
+                "Medium": "speed_mode_medium",
+                "Fast": "speed_mode_fast",
+                "Ultrafast": "speed_mode_ultrafast"
             }
         },
         "img_url": "https://ale.farama.org/_images/atlantis.gif",
@@ -335,14 +358,14 @@
     "DonkeyKong": {
         "multiplayer": false,
         "modifs": {
-            "no barrel": "nb",
-            "unlimited time": "ut",
-            "change level": {
-                "0": "cl0",
-                "1": "cl1",
-                "2": "cl2"
+            "Remove barrels from the game": "no_barrel",
+            "Provide unlimited time for the player": "unlimited_time",
+            "Changes the level": {
+                "Level 0": "change_level_0",
+                "Level 1": "change_level_1",
+                "Level 2": "change_level_2"
             },
-            "random start step": "rss"
+            "Handle the random starting position for each step": "random_start_step"
         },
         "img_url": "https://ale.farama.org/_images/donkey_kong.gif",
         "title": "Donkey Kong"
@@ -350,26 +373,21 @@
     "DoubleDunk": {
         "multiplayer": false,
         "modifs": {
-            "player color": {
-                "white": "pcw",
-                "green": "pcg",
-                "red": "pcr",
-                "yellow": "pcy",
-                "purple": "pcp",
-                "blue": "pcb"
+            "Changes the player color to a specified one": {
+                "White": "player_color_white",
+                "Green": "player_color_green",
+                "Red": "player_color_red",
+                "Yellow": "player_color_yellow",
+                "Purple": "player_color_purple",
+                "Blue": "player_color_blue"
             },
-            "enemy color": {
-                "white": "ecw",
-                "green": "ecg",
-                "red": "ecr",
-                "yellow": "ecy",
-                "purple": "ecp",
-                "blue": "ecb"
-            },
-            "drift strength": {
-                "no drift": "s0",
-                "normal drift": "s1",
-                "strong drift": "s2"
+            "Changes the enemy color to a specified one": {
+                "White": "enemy_color_white",
+                "Green": "enemy_color_green",
+                "Red": "enemy_color_red",
+                "Yellow": "enemy_color_yellow",
+                "Purple": "enemy_color_purple",
+                "Blue": "enemy_color_blue"
             }
         },
         "img_url": "https://ale.farama.org/_images/double_dunk.gif",
@@ -378,20 +396,14 @@
     "MontezumaRevenge": {
         "multiplayer": false,
         "modifs": {
-            "random position start": "rps",
-            "set level": {
-                "0": "sl0",
-                "1": "sl1",
-                "2": "sl2",
-                "3": "sl3",
-                "4": "sl4",
-                "5": "sl5",
-                "6": "sl6",
-                "7": "sl7",
-                "8": "sl8"
+            "Set a random starting position for the player": "random_position_start",
+            "Set the game to a specified level": {
+                "Level 0": "set_level_0",
+                "Level 1": "set_level_1",
+                "Level 2": "set_level_2"
             },
-            "randomize items": "ri",
-            "full inventory": "fi"
+            "Randomize which items are found in which rooms": "randomize_items",
+            "Add all items to the player's inventory": "full_inventory"
         },
         "img_url": "https://ale.farama.org/_images/montezuma_revenge.gif",
         "_comment": "#TODO: unify_item_color takes a second argument, which is color_index",

@@ -1,16 +1,68 @@
 # Arcade Suite
 This is the repo for our Bachelors project.
-The goal of this project is to let agents play the modified [HackAtari](https://github.com/k4ntz/HackAtari) versions of Atari2600 
-Games with the help of [OC_Atari](https://github.com/k4ntz/OC_Atari). We are going to implement PvP, PvE and EvE modes and visualize the decision making of Agents when they are playing using [ScoBots](https://github.com/k4ntz/SCoBots).
+The goal of this project is to let agents play the modified [HackAtari](https://github.com/k4ntz/HackAtari)
+versions of Atari2600 Games with the help of [OC_Atari](https://github.com/k4ntz/OC_Atari).
+We are going to implement PvP, PvE and EvE modes and visualize
+the decision-making of Agents when they are playing using [ScoBots](https://github.com/k4ntz/SCoBots).
 
-## Run Instructions
-**WARNING only tested on Ubuntu for now.** <br>
-To run the app you will first have to clone at least the HackAtari submodule.
-Then go into the HackAtari folder and run ```pip install -e .```. <br>
-You will also have to install some dependencies with: <br>
-```sudo apt install pkg-config libcairo2-dev gcc python3-dev libgirepository1.0-dev```. <br>
-Then you can install the requirments with: <br>
-```pip install -r requirements.txt``` <br>
+## Installation Instructions
+**WARNING: only works on Ubuntu for now.**
+
+To run the app you will first have to install the HackAtari submodule as well
+as install requirement for this project.
+
+First, install some dependencies:
+````bash
+sudo apt install pkg-config libcairo2-dev;
+sudo apt install gcc python3-dev libgirepository1.0-dev
+````
+
+Second, create and activate the virtual environment:
+````bash
+python3.9 -m venv .venv;
+source .venv/bin/activate;
+````
+
+Third, clone HackAtari and install it:
+````bash
+git clone https://github.com/k4ntz/HackAtari/ HackAtari;
+cd HackAtari;
+pip install -e .;
+pip install "gymnasium[atari, accept-rom-license]";
+````
+
+Fourth, install requirements for current project:
+````bash
+pip install -r requirements.txt;
+````
+
+### Setting up SCoBots
+To install SCoBots:
+````bash
+git clone https://github.com/k4ntz/SCoBots/ SCoBots;
+git checkout cleanup;
+source .venv/bin/activate;
+cd SCoBots;
+pip install -e .;
+pip install stable-baselines3[extras]==2.0.0;
+````
+
+#### Get agents for SCoBots
+Add agents (only with seed 0) to the agents folder in SCoBots:
+````bash
+cd SCoBots;
+wget https://hessenbox.tu-darmstadt.de/dl/fi47F21YBzVZBRfGPKswumb7/resources_seed0.zip;
+unzip resources.zip;
+rm resources.zip;
+````
+OR download agents (all seeds) for SCoBots:
+````bash
+cd SCoBots;
+wget https://hessenbox.tu-darmstadt.de/dl/fiPLH36Zwi8EVv8JaLU4HpE2/resources_all.zip;
+unzip resources.zip;
+rm resources.zip;
+````
+
 
 ## Supported Games
 | Game | Singleplayer | Multiplayer |
