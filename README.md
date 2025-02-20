@@ -6,61 +6,53 @@ We are going to implement PvP, PvE and EvE modes and visualize
 the decision-making of Agents when they are playing using [ScoBots](https://github.com/k4ntz/SCoBots).
 
 ## Installation Instructions
-**WARNING: only works on Ubuntu for now.**
+**WARNING: only tested on Ubuntu for now.**
 
-To run the app you will first have to install the HackAtari submodule as well
-as install requirement for this project.
+To run the app you will first have to install some dependencies.
 
-First, install some dependencies:
+For Ubuntu:
 ````bash
-sudo apt install pkg-config libcairo2-dev;
-sudo apt install gcc python3-dev libgirepository1.0-dev
+sudo apt install pkg-config libcairo2-dev gcc python3-dev libgirepository1.0-dev
 ````
 
-Second, create and activate the virtual environment:
+Then init and update the submodules
 ````bash
-python3.9 -m venv .venv;
-source .venv/bin/activate;
+git submodule init
+git submodule update
 ````
 
-Third, clone HackAtari and install it:
+To install HackAtari just go into the "HackAtari" directory with ```cd HackAtari``` and run
 ````bash
-git clone https://github.com/k4ntz/HackAtari/ HackAtari;
-cd HackAtari;
-pip install -e .;
-pip install "gymnasium[atari, accept-rom-license]";
+pip install -e .
 ````
 
-Fourth, install requirements for current project:
+After that go back to the directory of this repository with ```cd ..``` and run
 ````bash
-pip install -r requirements.txt;
+pip install -r requirements.txt
 ````
 
 ### Setting up SCoBots
 To install SCoBots:
 ````bash
-git clone https://github.com/k4ntz/SCoBots/ SCoBots;
-git checkout cleanup;
-source .venv/bin/activate;
-cd SCoBots;
-pip install -e .;
-pip install stable-baselines3[extras]==2.0.0;
+cd SCoBots
+pip install -e .
+pip install stable-baselines3[extras]==2.0.0
 ````
 
 #### Get agents for SCoBots
 Add agents (only with seed 0) to the agents folder in SCoBots:
 ````bash
-cd SCoBots;
-wget https://hessenbox.tu-darmstadt.de/dl/fi47F21YBzVZBRfGPKswumb7/resources_seed0.zip;
-unzip resources.zip;
-rm resources.zip;
+cd SCoBots
+wget https://hessenbox.tu-darmstadt.de/dl/fi47F21YBzVZBRfGPKswumb7/resources_seed0.zip
+unzip resources.zip
+rm resources.zip
 ````
 OR download agents (all seeds) for SCoBots:
 ````bash
-cd SCoBots;
-wget https://hessenbox.tu-darmstadt.de/dl/fiPLH36Zwi8EVv8JaLU4HpE2/resources_all.zip;
-unzip resources.zip;
-rm resources.zip;
+cd SCoBots
+wget https://hessenbox.tu-darmstadt.de/dl/fiPLH36Zwi8EVv8JaLU4HpE2/resources_all.zip
+unzip resources.zip
+rm resources.zip
 ````
 
 
