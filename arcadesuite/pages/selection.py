@@ -241,10 +241,11 @@ class Selection:
                         if isinstance(card, elements.CarouselCard) and card.get_current() not in self.selected_modifs:
                             self.selected_modifs.append(card.get_current())
                         elif isinstance(card, elements.CheckboxCard):
-                            if card.get_value() and card._checkbox.text not in self.selected_modifs:
-                                self.selected_modifs.append(card._checkbox.text)
-                            elif card._checkbox.text in self.selected_modifs:
-                                self.selected_modifs.remove(card._checkbox.text)
+                            modifier = self.meta["modifs"][card._checkbox.text]
+                            if card.get_value() and modifier not in self.selected_modifs:
+                                self.selected_modifs.append(modifier)
+                            elif modifier in self.selected_modifs:
+                                self.selected_modifs.remove(modifier)
                     ui.navigate.to("/selection")
 
         self._modif_cards[prev_index].unselect()

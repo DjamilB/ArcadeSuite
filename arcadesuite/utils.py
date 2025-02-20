@@ -1,14 +1,6 @@
 import os
 import json
 
-pygame_key_map = {
-        "e": 101,
-        " ": 32,
-        "w": 119,
-        "a": 97,
-        "s": 115,
-        "d": 100,
-}
 
 def get_games():
     path = "../res/games.json"
@@ -27,6 +19,18 @@ def get_json(path):
 
 
 def map_to_pygame_key_codes(keycode):
-    if keycode not in pygame_key_map:
-        return 0
-    return pygame_key_map[keycode]
+    match keycode:
+        case "e":
+            return 101
+        case " ":
+            return 32
+        case "w":
+            return 119
+        case "a":
+            return 97
+        case "s":
+            return 115
+        case "d":
+            return 100
+        case _:
+            return 0

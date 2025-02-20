@@ -6,7 +6,7 @@ from ocatari.utils import load_agent
 import torch
 import numpy as np
 from base64 import b64encode
-from arcadesuite.utils import map_to_pygame_key_codes
+from utils import map_to_pygame_key_codes
 
 
 class GamePage:

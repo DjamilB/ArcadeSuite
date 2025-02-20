@@ -291,19 +291,14 @@
         "multiplayer": true,
         "modifs": {
             "Disables the \"hitting motion\" with the right arm permanently": "one_armed",
-            "Move the player character up/down": {
-                "Moves the player character down": "gravity",
-                "Moves the player character up": "antigravity"
-            },
             "Move the player character forward/backward": {
                 "Moves the player character forward": "offensive",
                 "Moves the player character backward": "defensive"
             },
-            "Move the player character down in the game environment": "down",
             "Drunken boxing (apply random movements to the player's inputs)": "drunken_boxing",
             "Changes the player's color to a specified color": {
-                "Black": "color_player_black",
                 "White": "color_player_white",
+                "Black": "color_player_black",
                 "Red": "color_player_red",
                 "Blue": "color_player_blue",
                 "Green": "color_player_green"
@@ -317,7 +312,15 @@
             },
             "Switch the position of player and enemy": "switch_positions"
         },
-        "_comment": "gravity modif deleted for now cause it's broken",
+        "_comment": {
+          "modifs deleted because they're broken": {
+            "Move the player character up/down": {
+                "Moves the player character down": "gravity",
+                "Moves the player character up": "antigravity"
+            },
+            "Move the player character down in the game environment": "down"
+          }
+        },
         "img_url": "https://ale.farama.org/_images/boxing.gif",
         "title": "Boxing"
     },
