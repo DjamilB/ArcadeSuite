@@ -3,82 +3,97 @@ from graphviz import Digraph
 from treeElements import action_dict
 
 
-class NodeElement:
-    def __init__(self, id, feature, threshold, values):
-        self.id = id
-        self.feature = feature
-        self.threshold = threshold
-        self.values = values
-        self.children = []
+class Feature:
+    def __init__(self, index, featurename = None):
+        self.featurename = featurename
+        self.index = index
+        self.lower_bound = None
+        self.upper_bound = None
 
-    def get_id(self):
-        return self.id
-    
-    def set_left_child(self, child):
-        self.children.insert(0,child)
+    def set_upper_bound(self, bound):
+        if self.upper_bound is None:
+            self.upper_bound = bound
+        elif bound < self.upper_bound:
+            self.upper_bound = bound
 
-    def set_right_child(self, child):
-        self.children.insert(1,child)
+    def set_lower_bound(self, bound):
+        if self.lower_bound is None:
+            self.lower_bound = bound
+        elif bound > self.lower_bound:
+            self.lower_bound = bound
 
-    def get_children(self):
-        return self.children
-    
-    def getActionOfValues(self):
-        return action_dict[np.argmax(self.values)]
-    
-    def get_label(self):
-        return f"x[{self.feature}] <= {self.threshold: .2f} \\n Action: {self.getActionOfValues()}"
+    def get_bound(self):
+        temp = False
+        width = 10  # Einheitliche Breite für Zahlen & "Unknown"
+        middle_width = 12  # Breite für x[...] (zentriert)
 
-class EdgeElement:
-    def __init__(self, label, start, end):
-        self.label = label
-        self.start = start
-        self.end = end
+        if self.featurename is None:
+            element = f"x[{self.index}]"
+        else:
+            element = f"{self.featurename}"
 
-    def get_label(self):
-        return self.label
+        # Formatierung der unteren Grenze
+        if self.lower_bound is not None:
+            lower = f"{self.lower_bound: .2f}".rjust(width) + " \033[31m<=\033[0m "
+            temp = True
+        else:
+            lower = "-\u221e".rjust(width) + " \033[31m<=\033[0m "
 
-    def get_start(self):
-        return self.start
-    
-    def get_end(self):
-        return self.end
+        # Formatierung der oberen Grenze
+        if self.upper_bound is not None:
+            upper = f" \033[31m<\033[0m {self.upper_bound: .2f}".ljust(width + 6)
+            temp = True
+        else:
+            upper = f" \033[31m<\033[0m \u221e".ljust(width + 6)
 
+        if temp:
+            return lower + element.center(middle_width) + upper
+        else:
+            return None
+
+
+        
 class BinaryDotTree:
-    def __init__(self, model):
+    def __init__(self, model, featurenames= None):
         self.model = model
-        self.node_data = []              #Nodes
-        self.edge_data = [None]          #Edges (Start with None, so that for i>0:   edge_i leads to  node_i )
-        self.previous = []
-        self.initLists(0)
+        self.featurenames = featurenames
 
-    def initLists(self, node_id):
-        if node_id == -1:
-            return
+    def traverse(self, node_id, nodes, obs, features, tabs, ret):
+        if node_id < 0 or self.model.tree_.feature[node_id]<0 :
+            #print(ret)
+            return ret, (tabs-1)
+        feature = self.model.tree_.feature[node_id]
+       
+        # If featureIndex not already exists create new feature
+        if feature not in features: 
+            temp = Feature(feature)
+        else: 
+            temp = features[feature]
 
-        feature = self.model.tree_.feature[node_id]         
         threshold = self.model.tree_.threshold[node_id]
-        values = np.round(self.model.tree_.value[node_id], 2)
 
-        node = NodeElement(node_id, feature, threshold, values[0])
-        self.node_data.append(node)
-
-        left_child = self.model.tree_.children_left[node_id]
-        right_child = self.model.tree_.children_right[node_id]
-        node.set_left_child(left_child)
-        node.set_right_child(right_child)
-
-        # Recursive call 
-        if left_child != -1:
-            edge = EdgeElement("True", node_id, left_child)            
-            self.edge_data.append(edge)  
-            self.initLists(left_child)
-
-        if right_child != -1:
-            edge = EdgeElement("False", node_id, right_child)            
-            self.edge_data.append(edge)     
-            self.initLists(right_child)
-
+        # if obs[feature] <= threshold: Do leftchild Next (True) 
+        if obs[feature] <= threshold:
+            temp.set_upper_bound(obs[feature])
+            ret = ret + "\t" * tabs + f"x[{feature}]\033[90m({obs[feature]: .2f})\033[0m \033[31m <= \033[0m {threshold: .2f}\n"
+            features[feature] = temp
+            left_child = self.model.tree_.children_left[node_id]
+            if self.values_change(node_id, nodes):
+                return self.traverse(left_child, nodes, obs, features, tabs + 1, ret)
+            else:
+                return ret, tabs
+            
+        # if obs[feature] > threshold: do rightChild Next (False)
+        else:
+            temp.set_lower_bound(obs[feature])
+            ret = ret + "\t" * tabs + f"x[{feature}]\033[90m({obs[feature]: .2f})\033[0m \033[31m > \033[0m {threshold: .2f}\n"
+            features[feature] = temp
+            right_child = self.model.tree_.children_right[node_id]
+            if self.values_change(node_id, nodes):
+                return self.traverse(right_child, nodes, obs, features, tabs + 1, ret)
+            else: 
+                return ret, tabs
+            
     def getDecision(self, obs):
         node_id = 0  
         nodes = []  
@@ -97,77 +112,30 @@ class BinaryDotTree:
                 node_id = self.model.tree_.children_right[node_id]  
         return nodes
 
+    def values_change(self, current, nodes):
+        start = nodes.index(current)
+        current_value = self.get_value(nodes[start])
+        temp = False
+        for element in nodes[start+1:]:
+            if self.get_value(element) != current_value: 
+                temp = True
+        return temp
+
+    def get_value(self,node_id):
+       values = np.round(self.model.tree_.value[node_id], 2)
+       return  action_dict[np.argmax(values)]
+
     def getPath(self, obs):
         nodes = self.getDecision(obs)
-        length = len(nodes)-1
-        dot = Digraph()
-        dot.attr('node', shape='box', style='rounded', color='black', fontname='Roboto', penwidth="2")
-        dot.attr(ratio="fill")
-        #dot.attr('graph', rankdir='LR')
-        dot.attr('edge', fontname='Roboto')
-
-        recent_node = self.node_data[0]
-        dot.node(f"{self.node_data[0].get_id()}", label=self.node_data[0].get_label(), color="black")
-        prev = nodes[0]
-
-        for i in range(1,length+1):
-            recent_node = nodes[i]
-
-            if prev + 1 == recent_node: # Childnode is Left
-                
-                if i == length:
-                    dot.attr('node', shape='box', fontname='Roboto', style='rounded, filled')
-                    dot.node(f"{self.node_data[recent_node].get_id()}", label=f"Action: {self.node_data[recent_node].getActionOfValues()}", fillcolor="red")
-                else: 
-                    dot.node(f"{self.node_data[recent_node].get_id()}", label=self.node_data[recent_node].get_label(), color="black")
-                dot.edge(f"{self.edge_data[recent_node].get_start()}", f"{self.edge_data[recent_node].get_end()}", label=f"{self.edge_data[recent_node].get_label()}" ,color="black")
-                
-                if self.node_data[prev].get_children()[1] != None:
-                    dot.node(f"{self.node_data[recent_node].get_id()}_B", label="...", shape="triangle", color="black", fillcolor="white", style="")
-                    dot.edge(f"{self.edge_data[recent_node].get_start()}", f"{self.edge_data[recent_node].get_end()}_B", label="False" ,color="black")
-
-            else: # Childnode is Right
-                if self.node_data[prev].get_children()[0] != None:
-                    dot.node(f"{self.node_data[recent_node].get_id()}_A", label="...",shape="triangle", color="black", fillcolor="red", style="")
-                    dot.edge(f"{self.edge_data[recent_node].get_start()}", f"{self.edge_data[recent_node].get_end()}_A", label="True" ,color="black")
-
-                if i == length:
-                    dot.attr('node', shape='box', fontname='Roboto', style='rounded, filled')
-                    dot.node(f"{self.node_data[recent_node].get_id()}", label=f"Action: {self.node_data[recent_node].getActionOfValues()}", fillcolor="red")
-                else: 
-                    dot.node(f"{self.node_data[recent_node].get_id()}", label=self.node_data[recent_node].get_label(), color="black")               
-                dot.edge(f"{self.edge_data[recent_node].get_start()}", f"{self.edge_data[recent_node].get_end()}", label=f"{self.edge_data[recent_node].get_label()}" ,color="black")
-            prev = recent_node
+        features = dict()
+        ret,tabs = self.traverse(0,nodes, obs, features, 0,"")
+        ret = ret + "\n" + f"Choosen Action: \033[31m {self.get_value(nodes[-1])}\033[0m \n"
+        ret = ret + "\n" + "Feature Evaluation:" 
+        for feat in features.values():
+            ret = ret + "\n" + "\t" + feat.get_bound()
         
-        return dot
-
-
-    def getTree(self, obs):
-        nodes = self.getDecision(obs)
-
-        dot = Digraph()
-        dot.attr('node', shape='box', style='rounded, filled', color='black',fillcolor ="white",fontname='Roboto', penwidth="2")
-        dot.attr('graph', rankdir='LR') # Allginment Left to Right 
-        dot.attr(size="10,20")
-        dot.attr(ratio="fill")
-        #dot.attr('graph', ranksep = 'equally', splines='polyline')
-        dot.attr('edge', fontname='Roboto')
-
-        for i in range(len(self.node_data)):
-            if i in nodes:
-                dot.node(f"{self.node_data[i].get_id()}", label ="", tooltip=self.node_data[i].get_label(), color="red")
-                if i != 0: 
-                    dot.edge(f"{self.edge_data[i].get_start()}", f"{self.edge_data[i].get_end()}",label ="", edgetooltip=f"{self.edge_data[i].get_label()}", color="red")
-
-            else:
-                dot.node(f"{self.node_data[i].get_id()}", label ="",tooltip=self.node_data[i].get_label(), color="black") 
-                if i != 0: 
-                    dot.edge(f"{self.edge_data[i].get_start()}", f"{self.edge_data[i].get_end()}", label ="", edgetooltip=f"{self.edge_data[i].get_label()}", color="black")
-        return dot
-
-    def getRandomTree(self):
-        random_obs = np.random.rand(self.model.n_features_in_)* 20 - 10
-        return self.getTree(random_obs) 
+        print(ret)
+    
     
     def getRandomPath(self):
         random_obs = np.random.rand(self.model.n_features_in_)* 20 - 10
