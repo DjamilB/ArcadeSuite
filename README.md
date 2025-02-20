@@ -8,6 +8,8 @@ the decision-making of Agents when they are playing using [ScoBots](https://gith
 ## Installation Instructions
 **WARNING: only tested on Ubuntu for now.**
 
+This project uses Python 3.10
+
 To run the app you will first have to install some dependencies.
 
 For Ubuntu:
