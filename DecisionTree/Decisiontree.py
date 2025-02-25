@@ -1,11 +1,14 @@
 import numpy as np
 from graphviz import Digraph
-from treeElements import action_dict
+from utils import action_dict
 
 
 class Feature:
     def __init__(self, index, featurename = None):
-        self.featurename = featurename
+        if featurename:
+            self.featurename = featurename
+        else: 
+            self.featurename = f"x[{index}]"
         self.index = index
         self.lower_bound = None
         self.upper_bound = None
@@ -21,16 +24,14 @@ class Feature:
             self.lower_bound = bound
         elif bound > self.lower_bound:
             self.lower_bound = bound
+    
+    def get_name(self):
+        return self.featurename
 
     def get_bound(self):
         temp = False
         width = 10  # Einheitliche Breite für Zahlen & "Unknown"
         middle_width = 12  # Breite für x[...] (zentriert)
-
-        if self.featurename is None:
-            element = f"x[{self.index}]"
-        else:
-            element = f"{self.featurename}"
 
         # Formatierung der unteren Grenze
         if self.lower_bound is not None:
@@ -47,13 +48,11 @@ class Feature:
             upper = f" \033[31m<\033[0m \u221e".ljust(width + 6)
 
         if temp:
-            return lower + element.center(middle_width) + upper
+            return lower + self.featurename.center(middle_width) + upper
         else:
             return None
 
-
-        
-class BinaryDotTree:
+class Decisiontree:
     def __init__(self, model, featurenames= None):
         self.model = model
         self.featurenames = featurenames
@@ -65,8 +64,11 @@ class BinaryDotTree:
         feature = self.model.tree_.feature[node_id]
        
         # If featureIndex not already exists create new feature
-        if feature not in features: 
-            temp = Feature(feature, self.featurenames[feature])
+        if feature not in features:
+            if self.featurenames:
+                temp = Feature(feature, self.featurenames[feature])
+            else: 
+                temp = Feature(feature)
         else: 
             temp = features[feature]
 
@@ -75,7 +77,7 @@ class BinaryDotTree:
         # if obs[feature] <= threshold: Do leftchild Next (True) 
         if obs[feature] <= threshold:
             temp.set_upper_bound(threshold)
-            ret = ret + "\t" * tabs + f"{self.featurenames[feature]}\033[90m({obs[feature]: .2f})\033[0m \033[31m <= \033[0m {threshold: .2f}\n"
+            ret = ret + "\t" * tabs + f"{temp.get_name()}\033[90m({obs[feature]: .2f})\033[0m \033[31m <= \033[0m {threshold: .2f}\n"
             features[feature] = temp
             left_child = self.model.tree_.children_left[node_id]
             if self.values_change(node_id, nodes):
@@ -86,7 +88,7 @@ class BinaryDotTree:
         # if obs[feature] > threshold: do rightChild Next (False)
         else:
             temp.set_lower_bound(threshold)
-            ret = ret + "\t" * tabs + f"{self.featurenames[feature]}\033[90m({obs[feature]: .2f})\033[0m \033[31m > \033[0m {threshold: .2f}\n"
+            ret = ret + "\t" * tabs + f"{temp.get_name()}\033[90m({obs[feature]: .2f})\033[0m \033[31m > \033[0m {threshold: .2f}\n"
             features[feature] = temp
             right_child = self.model.tree_.children_right[node_id]
             if self.values_change(node_id, nodes):
@@ -134,6 +136,7 @@ class BinaryDotTree:
         for feat in features.values():
             ret = ret + "\n" + "\t" + feat.get_bound()
         
+        return ret
         print(ret)
     
     def getRandomPath(self):
