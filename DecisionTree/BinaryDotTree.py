@@ -66,7 +66,7 @@ class BinaryDotTree:
        
         # If featureIndex not already exists create new feature
         if feature not in features: 
-            temp = Feature(feature)
+            temp = Feature(feature, self.featurenames[feature])
         else: 
             temp = features[feature]
 
@@ -74,8 +74,8 @@ class BinaryDotTree:
 
         # if obs[feature] <= threshold: Do leftchild Next (True) 
         if obs[feature] <= threshold:
-            temp.set_upper_bound(obs[feature])
-            ret = ret + "\t" * tabs + f"x[{feature}]\033[90m({obs[feature]: .2f})\033[0m \033[31m <= \033[0m {threshold: .2f}\n"
+            temp.set_upper_bound(threshold)
+            ret = ret + "\t" * tabs + f"{self.featurenames[feature]}\033[90m({obs[feature]: .2f})\033[0m \033[31m <= \033[0m {threshold: .2f}\n"
             features[feature] = temp
             left_child = self.model.tree_.children_left[node_id]
             if self.values_change(node_id, nodes):
@@ -85,8 +85,8 @@ class BinaryDotTree:
             
         # if obs[feature] > threshold: do rightChild Next (False)
         else:
-            temp.set_lower_bound(obs[feature])
-            ret = ret + "\t" * tabs + f"x[{feature}]\033[90m({obs[feature]: .2f})\033[0m \033[31m > \033[0m {threshold: .2f}\n"
+            temp.set_lower_bound(threshold)
+            ret = ret + "\t" * tabs + f"{self.featurenames[feature]}\033[90m({obs[feature]: .2f})\033[0m \033[31m > \033[0m {threshold: .2f}\n"
             features[feature] = temp
             right_child = self.model.tree_.children_right[node_id]
             if self.values_change(node_id, nodes):
@@ -118,7 +118,7 @@ class BinaryDotTree:
         temp = False
         for element in nodes[start+1:]:
             if self.get_value(element) != current_value: 
-                temp = True
+                return True
         return temp
 
     def get_value(self,node_id):
@@ -136,9 +136,9 @@ class BinaryDotTree:
         
         print(ret)
     
-    
     def getRandomPath(self):
         random_obs = np.random.rand(self.model.n_features_in_)* 20 - 10
+        print("Number Of Features", self.model.n_features_in_)
         return self.getPath(random_obs)
 
 
