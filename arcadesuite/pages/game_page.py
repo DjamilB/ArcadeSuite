@@ -2,11 +2,12 @@ from nicegui import ui
 from nicegui.events import KeyEventArguments
 from hackatari import HackAtari
 from pettingzoo.atari.base_atari_env import BaseAtariEnv
-from ocatari.utils import load_agent
+from ocatari.utils import load_agent, load_multiplayer_agent
 import torch
 import numpy as np
 from base64 import b64encode
-from utils import map_to_pygame_key_codes, head_html
+from utils import map_to_pygame_key_codes, head_html, get_keys_to_action_p1, get_keys_to_action_p2
+
 
 
 class GamePage:
@@ -36,20 +37,29 @@ class GamePage:
             ui.add_body_html(f"<canvas id='gameCanvas' style='border: 1px solid black;' width=800px height=1050px/><script>{canvas_script}</script>")
             ui.keyboard(on_key=self.handle_key)
 
-    def populate(self, game, modifs, p1_is_agent, p1_agent_path, p2_is_agent=False, p2_agent_path=""):
+    def populate(self, game, modifs, p1_is_agent, p1_agent_path, is_multiplayer=False, p2_is_agent=False, p2_agent_path=""):
         self.p1_is_agent = p1_is_agent
         self.p2_is_agent = p2_is_agent
+        self.is_multiplayer = is_multiplayer
 
         # create HackAtari environment
         obs_mode = "obj"
+        obs_type = "ram"
         if p1_is_agent:
             if p1_agent_path.find("dqn", 0, len(p1_agent_path)) != -1:
                 obs_mode = "dqn"
+                obs_type = "rgb_image"
             elif p1_agent_path.find("c51", 0, len(p1_agent_path)) != -1:
                 obs_mode = "dqn"
+                obs_type = "rgb_image"
 
-        if p1_is_agent and p2_is_agent:
-            self.env = BaseAtariEnv(game=game.lower(), num_players=2, mode_num=None)
+        if is_multiplayer:
+            self.env = BaseAtariEnv(game=game.lower(),
+                                    num_players=2,
+                                    mode_num=None,
+                                    env_name=game.lower(),
+                                    obs_type=obs_type,
+                                    render_mode="rgb_array")
         else:
             self.env = HackAtari(game,
                                  modifs=modifs,
@@ -58,15 +68,18 @@ class GamePage:
                                  full_action_space=not p1_is_agent,
                                  obs_mode=obs_mode)
 
-        self.policies = list([None, None])
+        self.policies = dict()
 
-        if p1_is_agent:
-            _, self.policies[0] = load_agent(p1_agent_path, self.env, "cpu")
+        if p1_is_agent and not is_multiplayer:
+            _, self.policies['first_0'] = load_agent(p1_agent_path, self.env, "cpu")
+        elif p1_is_agent and p2_is_agent:
+            _, self.policies['first_0'] = load_multiplayer_agent(p1_agent_path, self.env.possible_agents[0], self.env, "cpu")
+            _, self.policies['second_0'] = load_multiplayer_agent(p2_agent_path, self.env.possible_agents[1], self.env, "cpu")
 
-        if p2_is_agent:
-            _, self.policies[1] = load_agent(p2_agent_path, self.env, "cpu")
-
-        self.obs, _ = self.env.reset()
+        if not is_multiplayer:
+            self.obs, _ = self.env.reset()
+        else:
+            self.env.reset()
         self.nstep = 1
         self.tr = 0
 
@@ -74,50 +87,91 @@ class GamePage:
         self.env.render()
         self.env.render_oc_overlay = False
 
-        self.keys2action = self.env.unwrapped.get_keys_to_action()
-        self.current_keys_down = set()
+        self.keys2action_p1 = get_keys_to_action_p1()
+        self.keys2action_p2 = get_keys_to_action_p2()
+        self.current_keys_down_p1 = set()
+        self.current_keys_down_p2 = set()
 
     def handle_key(self, e: KeyEventArguments):
         if e.action.keydown:
             if e.key == "q":
                 self.timer.cancel()
                 ui.navigate.to("/")
-            elif (map_to_pygame_key_codes(e.key),) in self.keys2action.keys():
-                self.current_keys_down.add(map_to_pygame_key_codes(e.key))
+            elif (str(e.key),) in self.keys2action_p1.keys():
+                self.current_keys_down_p1.add(str(e.key))
+            elif (str(e.key),) in self.keys2action_p2.keys():
+                self.current_keys_down_p2.add(str(e.key))
         if e.action.keyup:
-            if (map_to_pygame_key_codes(e.key),) in self.keys2action.keys():
-                self.current_keys_down.remove(map_to_pygame_key_codes(e.key))
+            if (str(e.key),) in self.keys2action_p1.keys():
+                self.current_keys_down_p1.remove(str(e.key))
+            if (str(e.key),) in self.keys2action_p2.keys():
+                self.current_keys_down_p2.remove(str(e.key))
 
     # TODO(lars): finish multiplayer support
     async def step_game(self):
-        self.pressed_keys = list(self.current_keys_down)
-        self.pressed_keys.sort()
-        self.pressed_keys = tuple(self.pressed_keys)
-        if not self.p1_is_agent and not self.p2_is_agent:
-            if self.pressed_keys in self.keys2action.keys():
-                action = self.keys2action[self.pressed_keys]
+        self.pressed_keys_p1 = list(self.current_keys_down_p1)
+        self.pressed_keys_p1.sort()
+        self.pressed_keys_p1 = tuple(self.pressed_keys_p1)
+
+        self.pressed_keys_p2 = list(self.current_keys_down_p2)
+        self.pressed_keys_p2.sort()
+        self.pressed_keys_p2 = tuple(self.pressed_keys_p2)
+
+        if self.is_multiplayer:
+            if self.p1_is_agent:
+                observation, reward, termination, truncation, info = self.env.last()
+                if termination or truncation:
+                    action = None
+                else:
+                    action = self.policies['first_0'](torch.Tensor(observation).unsqueeze(0))[0]
             else:
-                action = 0
-            self.obs, reward, terminated, truncated, info = self.env.step(action)
-        elif self.p1_is_agent and not self.p2_is_agent:
-            action = self.policies[0](torch.Tensor(self.obs).unsqueeze(0))[0]
-            self.obs, reward, terminated, truncated, info = self.env.step(action)
-            print(action)
+                if self.pressed_keys_p1 in self.keys2action_p1.keys():
+                    action = self.keys2action_p1[self.pressed_keys_p1]
+                else:
+                    action = 0
+
+            self.env.step(action)
+
+            if self.p2_is_agent:
+                observation, reward, termination, truncation, info = self.env.last()
+                if termination or truncation:
+                    action = None
+                else:
+                    action = self.policies['second_0'](torch.Tensor(observation).unsqueeze(0))[0]
+            else:
+                if self.pressed_keys_p2 in self.keys2action_p2.keys():
+                    action = self.keys2action_p2[self.pressed_keys_p2]
+                else:
+                    action = 0
+
+            self.env.step(action)
         else:
-            action = self.policies[0](torch.Tensor(self.obs).unsqueeze(0))[0]
-            self.obs, reward, terminated, truncated, info = self.env.step(action)
-            action = self.policies[1](torch.Tensor(self.obs).unsqueeze(0))[0]
-            self.obs, reward, terminated, truncated, info = self.env.step(action)
-        self.tr += reward
-        if terminated or truncated:
-            print(info)
-            print(self.tr)
+            if not self.p1_is_agent:
+                if self.pressed_keys_p1 in self.keys2action_p1.keys():
+                    action = self.keys2action_p1[self.pressed_keys_p1]
+                else:
+                    action = 0
+                self.obs, self.reward, self.terminated, self.truncated, self.info = self.env.step(action)
+            else:
+                action = self.policies['first_0'](torch.Tensor(self.obs).unsqueeze(0))[0]
+                self.obs, self.reward, self.terminated, self.truncated, self.info = self.env.step(action)
+
+        if self.is_multiplayer:
+            _, self.reward, self.terminated, self.truncated, self.info = self.env.last()
+
+        self.tr += self.reward
+        if self.terminated or self.truncated:
+            # print(info)
+            # print(self.tr)
             self.tr = 0
             self.env.reset()
             # Navigate to some game over screen?
         self.nstep += 1
 
-        rgb_data = self.env.render().transpose((1, 0, 2))
+        if self.is_multiplayer:
+            rgb_data = self.env.render().repeat(5, axis=0).repeat(5, axis=1)
+        else:
+            rgb_data = self.env.render().transpose((1, 0, 2))
         rgba_data = np.concatenate([rgb_data, 255 * np.ones((1050, 800, 1), dtype=np.uint8)], axis=-1)  # Add alpha channel
         pixel_data = rgba_data.tobytes()  # Convert to raw bytes
 

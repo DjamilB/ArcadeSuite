@@ -1,5 +1,6 @@
 import os
 import json
+import ale_py
 
 head_html = '''
             <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,3 +43,71 @@ def map_to_pygame_key_codes(keycode):
         "s": 115,
         "d": 100,
     }.get(str(keycode), 0)
+
+
+def get_keys_to_action_p1() -> dict[tuple[int, ...], ale_py.Action]:
+    UP = "w"
+    LEFT = "a"
+    RIGHT = "d"
+    DOWN = "s"
+    FIRE = " "
+    NOOP = "e"
+
+    mapping = {
+        ale_py.Action.NOOP: (NOOP,),
+        ale_py.Action.UP: (UP,),
+        ale_py.Action.FIRE: (FIRE,),
+        ale_py.Action.DOWN: (DOWN,),
+        ale_py.Action.LEFT: (LEFT,),
+        ale_py.Action.RIGHT: (RIGHT,),
+        ale_py.Action.UPFIRE: (UP, FIRE),
+        ale_py.Action.DOWNFIRE: (DOWN, FIRE),
+        ale_py.Action.LEFTFIRE: (LEFT, FIRE),
+        ale_py.Action.RIGHTFIRE: (RIGHT, FIRE),
+        ale_py.Action.UPLEFT: (UP, LEFT),
+        ale_py.Action.UPRIGHT: (UP, RIGHT),
+        ale_py.Action.DOWNLEFT: (DOWN, LEFT),
+        ale_py.Action.DOWNRIGHT: (DOWN, RIGHT),
+        ale_py.Action.UPLEFTFIRE: (UP, LEFT, FIRE),
+        ale_py.Action.UPRIGHTFIRE: (UP, RIGHT, FIRE),
+        ale_py.Action.DOWNLEFTFIRE: (DOWN, LEFT, FIRE),
+        ale_py.Action.DOWNRIGHTFIRE: (DOWN, RIGHT, FIRE),
+    }
+
+    return {
+        tuple(sorted(mapping[act_idx])): act_idx for act_idx in range(18)
+    }
+
+
+def get_keys_to_action_p2() -> dict[tuple[int, ...], ale_py.Action]:
+    UP = "ArrowUp"
+    LEFT = "ArrowLeft"
+    RIGHT = "ArrowRight"
+    DOWN = "ArrowDown"
+    FIRE = "Control"
+    NOOP = "Shift"
+
+    mapping = {
+        ale_py.Action.NOOP: (NOOP,),
+        ale_py.Action.UP: (UP,),
+        ale_py.Action.FIRE: (FIRE,),
+        ale_py.Action.DOWN: (DOWN,),
+        ale_py.Action.LEFT: (LEFT,),
+        ale_py.Action.RIGHT: (RIGHT,),
+        ale_py.Action.UPFIRE: (UP, FIRE),
+        ale_py.Action.DOWNFIRE: (DOWN, FIRE),
+        ale_py.Action.LEFTFIRE: (LEFT, FIRE),
+        ale_py.Action.RIGHTFIRE: (RIGHT, FIRE),
+        ale_py.Action.UPLEFT: (UP, LEFT),
+        ale_py.Action.UPRIGHT: (UP, RIGHT),
+        ale_py.Action.DOWNLEFT: (DOWN, LEFT),
+        ale_py.Action.DOWNRIGHT: (DOWN, RIGHT),
+        ale_py.Action.UPLEFTFIRE: (UP, LEFT, FIRE),
+        ale_py.Action.UPRIGHTFIRE: (UP, RIGHT, FIRE),
+        ale_py.Action.DOWNLEFTFIRE: (DOWN, LEFT, FIRE),
+        ale_py.Action.DOWNRIGHTFIRE: (DOWN, RIGHT, FIRE),
+    }
+
+    return {
+        tuple(sorted(mapping[act_idx])): act_idx for act_idx in range(18)
+    }
