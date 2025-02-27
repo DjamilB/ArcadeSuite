@@ -1,8 +1,13 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
 # dotenv
 .env
 .venv
 env/
 venv/
+venv_as/
 ENV/
 env.bak/
 venv.bak/
@@ -14,5 +19,4 @@ venv.bak/
 *.sublime-workspace
 
 
-*/__pycache__
 res/*/icon.png

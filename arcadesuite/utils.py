@@ -1,6 +1,21 @@
 import os
 import json
 
+head_html = '''
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+            <style>
+                body {
+                    background-color: bisque;
+                    font-family: "VT323", monospace;
+                    font-size: 18px;
+                    font-weight: 400;
+                    font-style: normal;
+                }
+            </style>
+            '''
+
 
 def get_games():
     path = "../res/games.json"
@@ -19,18 +34,11 @@ def get_json(path):
 
 
 def map_to_pygame_key_codes(keycode):
-    match keycode:
-        case "e":
-            return 101
-        case " ":
-            return 32
-        case "w":
-            return 119
-        case "a":
-            return 97
-        case "s":
-            return 115
-        case "d":
-            return 100
-        case _:
-            return 0
+    return {
+        "e": 101,
+        " ": 32,
+        "w": 119,
+        "a": 97,
+        "s": 115,
+        "d": 100,
+    }.get(str(keycode), 0)

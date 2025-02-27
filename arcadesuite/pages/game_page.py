@@ -6,7 +6,7 @@ from ocatari.utils import load_agent
 import torch
 import numpy as np
 from base64 import b64encode
-from utils import map_to_pygame_key_codes
+from utils import map_to_pygame_key_codes, head_html
 
 
 class GamePage:
@@ -32,7 +32,7 @@ class GamePage:
             };
             '''
 
-            ui.add_head_html("<style>body {background-color: black;}</style>")
+            ui.add_head_html(head_html)
             ui.add_body_html(f"<canvas id='gameCanvas' style='border: 1px solid black;' width=800px height=1050px/><script>{canvas_script}</script>")
             ui.keyboard(on_key=self.handle_key)
 

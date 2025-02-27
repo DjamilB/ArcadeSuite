@@ -8,13 +8,13 @@ the decision-making of Agents when they are playing using [ScoBots](https://gith
 ## Installation Instructions
 **WARNING: only tested on Ubuntu for now.**
 
-This project uses Python 3.10
+This project uses Python 3.9
 
 To run the app you will first have to install some dependencies.
 
 For Ubuntu:
 ````bash
-sudo apt install pkg-config libcairo2-dev gcc python3-dev libgirepository1.0-dev
+sudo apt install pkg-config libcairo2-dev gcc python3.9-dev libgirepository1.0-dev
 ````
 
 Then init and update the submodules
@@ -31,6 +31,7 @@ pip install -e .
 After that go back to the directory of this repository with ```cd ..``` and run
 ````bash
 pip install -r requirements.txt
+pip install "gymnasium[atari, accept-rom-license]"
 ````
 
 ### Setting up SCoBots
