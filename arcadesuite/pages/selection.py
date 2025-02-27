@@ -1,6 +1,6 @@
 from nicegui import ui
 from nicegui.events import KeyEventArguments
-from utils import get_json
+from utils import get_json, head_html
 import os
 
 import elements
@@ -17,7 +17,7 @@ class Selection:
         @ui.page("/selection")
         def selection():
             self._selection_cards = list()
-            ui.add_head_html("<style>body {background-color: bisque;}</style>")
+            ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
                 with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
                     self._selection_cards.append(elements.LabelCard("Agents"))
@@ -32,7 +32,7 @@ class Selection:
         @ui.page("/selection/Agents")
         def agents():
             self._agent_cards = list()
-            ui.add_head_html("<style>body {background-color: bisque;}</style>")
+            ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
                 with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
                     self._agent_cards.append(elements.CarouselCard("Player1", {"Player": "Player", "Agent": "Agent"}))
@@ -65,7 +65,7 @@ class Selection:
             self._agent_path_cards = list()
             self.agents = os.listdir(f"../models/{self.selected_game}/0")
 
-            ui.add_head_html("<style>body {background-color: bisque;}</style>")
+            ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
                 with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
                     for agent in self.agents:
@@ -80,7 +80,7 @@ class Selection:
         def modifs():
             self._modif_cards = list()
 
-            ui.add_head_html("<style>body {background-color: bisque;}</style>")
+            ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
                 with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
                     for modif in self.modifs:

@@ -1,6 +1,21 @@
 import os
 import json
 
+head_html = '''
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+            <style>
+                body {
+                    background-color: bisque;
+                    font-family: "VT323", monospace;
+                    font-size: 18px;
+                    font-weight: 400;
+                    font-style: normal;
+                }
+            </style>
+            '''
+
 
 def get_games():
     path = "../res/games.json"

@@ -4,7 +4,7 @@ multiprocessing.set_start_method("spawn", force=True)
 
 from nicegui import ui, app
 from nicegui.events import KeyEventArguments
-from utils import get_games, get_json
+from utils import get_games, get_json, head_html
 import os
 
 import elements
@@ -30,7 +30,8 @@ def main_page():
     selected_game = GAMES[select_index]
     cards = dict()
 
-    ui.add_head_html("<style>body {background-color: bisque;}</style>")
+    ui.add_head_html(head_html)
+
     with ui.grid(columns=CARD_COLUMNS):
         for game in GAMES:
             cards[game] = elements.GameCard(game)
@@ -40,7 +41,7 @@ def main_page():
 
     def handle_key(e: KeyEventArguments):
         global select_index
-        global selected_game
+        nonlocal selected_game
         prev_select = select_index
         if e.action.keydown:
             if e.key.arrow_left:
