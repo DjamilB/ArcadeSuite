@@ -2,7 +2,7 @@ import os
 import sys
 import pytest
 import json
-from ocatari.core import OCAtari, AVAILABLE_GAMES
+from game_page import populate
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from arcadesuite.utils import get_games, get_json
@@ -20,14 +20,19 @@ def test_game_modifs():
     for game in GAMES:
         meta = load_metadata(game)
         if meta["modifs"]["change_enemy"] == "ce":
-            env = OCAtari(game)
+            env = populate(game, "", False, "", True, "")
             ram_before = env.get_ram()
-            env.step()
+            env = populate(game, "ce", False, "", True, "")
             ram_after = env.get_ram()
             assert ram_before != ram_after
             
         if meta["modifs"]["change_player"] == "cp":
-            env = OCAtari(game)
+            env = populate(game, "", False, "", True, "")
+            ram_before = env.get_ram()
+            env = populate(game, "cp", False, "", True, "")
+            ram_after = env.get_ram()
+            assert ram_before != ram_after
+            
 
         #TODO(artjom): add tests for other modifs ...
 
