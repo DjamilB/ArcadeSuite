@@ -94,7 +94,6 @@ class Selection:
                             n = 0
                             found = False
                             for m in self.meta["modifs"][modif]:
-                                print(self.meta["modifs"][modif][m])
                                 if self.meta["modifs"][modif][m] in self.selected_modifs:
                                     found = True
                                     break
