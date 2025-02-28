@@ -2,12 +2,12 @@ from nicegui import ui
 from nicegui.events import KeyEventArguments
 from hackatari import HackAtari
 from pettingzoo.atari.base_atari_env import BaseAtariEnv
-from ocatari.utils import load_agent, load_multiplayer_agent
+from ocatari.utils import load_agent
 import torch
 import numpy as np
 from base64 import b64encode
-from utils import map_to_pygame_key_codes, head_html, get_keys_to_action_p1, get_keys_to_action_p2
-
+from utils import map_to_pygame_key_codes, head_html, get_keys_to_action_p1, get_keys_to_action_p2, load_multiplayer_agent
+from supersuit import color_reduction_v0, resize_v1, frame_stack_v1, reshape_v0
 
 
 class GamePage:
@@ -60,6 +60,7 @@ class GamePage:
                                     env_name=game.lower(),
                                     obs_type=obs_type,
                                     render_mode="rgb_array")
+            self.env = reshape_v0(frame_stack_v1(resize_v1(color_reduction_v0(self.env, 'full'), x_size=84, y_size=84), 4), (4, 84, 84))
         else:
             self.env = HackAtari(game,
                                  modifs=modifs,
@@ -73,8 +74,8 @@ class GamePage:
         if p1_is_agent and not is_multiplayer:
             _, self.policies['first_0'] = load_agent(p1_agent_path, self.env, "cpu")
         elif p1_is_agent and p2_is_agent:
-            _, self.policies['first_0'] = load_multiplayer_agent(p1_agent_path, self.env.possible_agents[0], self.env, "cpu")
-            _, self.policies['second_0'] = load_multiplayer_agent(p2_agent_path, self.env.possible_agents[1], self.env, "cpu")
+            _, self.policies['first_0'] = load_multiplayer_agent(p1_agent_path, self.env.unwrapped.possible_agents[0], self.env.unwrapped, "cpu")
+            _, self.policies['second_0'] = load_multiplayer_agent(p2_agent_path, self.env.unwrapped.possible_agents[1], self.env.unwrapped, "cpu")
 
         if not is_multiplayer:
             self.obs, _ = self.env.reset()
