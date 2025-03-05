@@ -3,12 +3,12 @@ from nicegui.events import KeyEventArguments
 from hackatari import HackAtari
 from pettingzoo.atari.base_atari_env import BaseAtariEnv
 from ocatari.utils import load_agent
+import ocatari
 import torch
 import numpy as np
 from base64 import b64encode
 from utils import head_html, get_keys_to_action_p1, get_keys_to_action_p2, load_multiplayer_agent
 from supersuit import resize_v1, frame_stack_v1
-import matplotlib.pyplot as plt
 
 
 class GamePage:
@@ -22,7 +22,7 @@ class GamePage:
             canvas_script = '''
             const canvas = document.getElementById("gameCanvas");
             const ctx = canvas.getContext("2d");
-            const imageData = ctx.createImageData(800, 1050);
+            const imageData = ctx.createImageData(640, 840);
             const grayData = ctx.createImageData(84, 84);
 
             const grayCanvas = document.getElementById("grayCanvas");
@@ -53,11 +53,12 @@ class GamePage:
             ui.add_head_html(head_html)
             # Debug canvas for grayscale observation data
             # ui.add_body_html("<canvas id='grayCanvas' style='border: 1px solid black;' width=84px height=84px></canvas>")
-            ui.add_body_html("<canvas id='gameCanvas' style='border: 1px solid black;' width=800px height=1050px />")
+            ui.add_body_html("<canvas id='gameCanvas' style='border: 1px solid black;' width=640px height=840px />")
             ui.add_body_html(f"<script>{canvas_script}</script>")
             ui.keyboard(on_key=self.handle_key)
 
     def populate(self, game, modifs, p1_is_agent, p1_agent_path, is_multiplayer=False, p2_is_agent=False, p2_agent_path=""):
+        ocatari.core.UPSCALE_FACTOR = 4
         self.p1_is_agent = p1_is_agent
         self.p2_is_agent = p2_is_agent
         self.is_multiplayer = is_multiplayer
@@ -199,10 +200,10 @@ class GamePage:
         self.nstep += 1
 
         if self.is_multiplayer:
-            rgb_data = self.env.render().repeat(5, axis=0).repeat(5, axis=1)
+            rgb_data = self.env.render().repeat(4, axis=0).repeat(4, axis=1)
         else:
             rgb_data = self.env.render().transpose((1, 0, 2))
-        rgba_data = np.concatenate([rgb_data, 255 * np.ones((1050, 800, 1), dtype=np.uint8)], axis=-1)  # Add alpha channel
+        rgba_data = np.concatenate([rgb_data, 255 * np.ones((840, 640, 1), dtype=np.uint8)], axis=-1)  # Add alpha channel
         pixel_data = rgba_data.tobytes()  # Convert to raw bytes
 
         # Encode the data as Base64
@@ -216,11 +217,7 @@ class GamePage:
 
         # if self.is_multiplayer:
         #     obs, _, _, _, _ = self.env.last()
-        #     # grayscale_image = np.transpose(obs, (2, 0, 1))
         #     grayscale_image = np.delete(obs, [1, 2, 3], 2)
-        #     # grayscale_image = np.delete(grayscale_image, 0, 0)
-        #     # grayscale_image = np.delete(grayscale_image, 0, 0)
-        #     # grayscale_image = np.transpose(grayscale_image, (1, 2, 0))
         #     grayscale_image = np.concatenate([grayscale_image, 255 * np.zeros((84, 84, 1), dtype=np.uint8)], axis=-1)
         #     grayscale_image = np.concatenate([grayscale_image, 255 * np.zeros((84, 84, 1), dtype=np.uint8)], axis=-1)
         #     grayscale_image = np.concatenate([grayscale_image, 255 * np.ones((84, 84, 1), dtype=np.uint8)], axis=-1)
