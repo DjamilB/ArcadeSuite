@@ -1,6 +1,6 @@
-const canvas = document.getElementById("myCanvas");
+const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-const imageData = ctx.createImageData(200, 100);
+const imageData = ctx.createImageData(640, 840);
 
 function updateCanvas(base64Data) {
     const binaryData = atob(base64Data);  // Decode Base64 string to binary

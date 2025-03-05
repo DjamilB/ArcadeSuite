@@ -18,43 +18,11 @@ class GamePage:
             # TODO(lars): rework game loop
             self.timer = ui.timer(1/30, self.step_game)
 
-            # TODO(Lars): put in different file
-            canvas_script = '''
-            const canvas = document.getElementById("gameCanvas");
-            const ctx = canvas.getContext("2d");
-            const imageData = ctx.createImageData(640, 840);
-            const grayData = ctx.createImageData(84, 84);
-
-            const grayCanvas = document.getElementById("grayCanvas");
-            const grayCtx = grayCanvas.getContext("2d");
-
-            function updateCanvas(base64Data) {
-                const binaryData = atob(base64Data);  // Decode Base64 string to binary
-                var pixelData = new Uint8ClampedArray(binaryData.length);
-                for (let i = 0; i < binaryData.length; i++) {
-                    pixelData[i] = binaryData.charCodeAt(i);  // Convert binary string to byte array
-                }
-                imageData.data.set(pixelData);  // Set pixel data on canvas
-                ctx.putImageData(imageData, 0, 0);  // Render to canvas
-            };
-
-            // debug function to print the Grayscale observation data
-            function updateGrayCanvas(base64Data) {
-                const binaryData = atob(base64Data);
-                var pixelData = new Uint8ClampedArray(binaryData.length);
-                for (let i = 0; i < binaryData.length; i++) {
-                    pixelData[i] = binaryData.charCodeAt(i);
-                }
-                grayData.data.set(pixelData);
-                grayCtx.putImageData(grayData, 0, 0);
-            }
-            '''
-
             ui.add_head_html(head_html)
             # Debug canvas for grayscale observation data
             # ui.add_body_html("<canvas id='grayCanvas' style='border: 1px solid black;' width=84px height=84px></canvas>")
-            ui.add_body_html("<canvas id='gameCanvas' style='border: 1px solid black;' width=640px height=840px />")
-            ui.add_body_html(f"<script>{canvas_script}</script>")
+            ui.add_body_html("<canvas id='gameCanvas' style='border: 1px solid black;' width=640px height=840px></canvas>")
+            ui.add_body_html("<script type='text/javascript' src='static/javascript/canvas.js'></script>")
             ui.keyboard(on_key=self.handle_key)
 
     def populate(self, game, modifs, p1_is_agent, p1_agent_path, is_multiplayer=False, p2_is_agent=False, p2_agent_path=""):
