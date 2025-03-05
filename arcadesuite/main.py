@@ -73,4 +73,4 @@ def main_page():
     ui.keyboard(on_key=handle_key)
 
 
-ui.run(title="Arcade Suite", native=False, dark=False)
+ui.run(title="Arcade Suite", native=False, dark=False, window_size=(1000, 900))
