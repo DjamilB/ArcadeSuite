@@ -6,14 +6,16 @@ from ocatari.utils import load_agent
 import torch
 import numpy as np
 from base64 import b64encode
-from utils import map_to_pygame_key_codes, head_html, get_keys_to_action_p1, get_keys_to_action_p2, load_multiplayer_agent
-from supersuit import color_reduction_v0, resize_v1, frame_stack_v1, reshape_v0
+from utils import head_html, get_keys_to_action_p1, get_keys_to_action_p2, load_multiplayer_agent
+from supersuit import resize_v1, frame_stack_v1
+import matplotlib.pyplot as plt
 
 
 class GamePage:
     def __init__(self):
         @ui.page("/game_page")
         def page():
+            # TODO(lars): rework game loop
             self.timer = ui.timer(1/30, self.step_game)
 
             # TODO(Lars): put in different file
@@ -21,6 +23,10 @@ class GamePage:
             const canvas = document.getElementById("gameCanvas");
             const ctx = canvas.getContext("2d");
             const imageData = ctx.createImageData(800, 1050);
+            const grayData = ctx.createImageData(84, 84);
+
+            const grayCanvas = document.getElementById("grayCanvas");
+            const grayCtx = grayCanvas.getContext("2d");
 
             function updateCanvas(base64Data) {
                 const binaryData = atob(base64Data);  // Decode Base64 string to binary
@@ -31,10 +37,24 @@ class GamePage:
                 imageData.data.set(pixelData);  // Set pixel data on canvas
                 ctx.putImageData(imageData, 0, 0);  // Render to canvas
             };
+
+            // debug function to print the Grayscale observation data
+            function updateGrayCanvas(base64Data) {
+                const binaryData = atob(base64Data);
+                var pixelData = new Uint8ClampedArray(binaryData.length);
+                for (let i = 0; i < binaryData.length; i++) {
+                    pixelData[i] = binaryData.charCodeAt(i);
+                }
+                grayData.data.set(pixelData);
+                grayCtx.putImageData(grayData, 0, 0);
+            }
             '''
 
             ui.add_head_html(head_html)
-            ui.add_body_html(f"<canvas id='gameCanvas' style='border: 1px solid black;' width=800px height=1050px/><script>{canvas_script}</script>")
+            # Debug canvas for grayscale observation data
+            # ui.add_body_html("<canvas id='grayCanvas' style='border: 1px solid black;' width=84px height=84px></canvas>")
+            ui.add_body_html("<canvas id='gameCanvas' style='border: 1px solid black;' width=800px height=1050px />")
+            ui.add_body_html(f"<script>{canvas_script}</script>")
             ui.keyboard(on_key=self.handle_key)
 
     def populate(self, game, modifs, p1_is_agent, p1_agent_path, is_multiplayer=False, p2_is_agent=False, p2_agent_path=""):
@@ -48,10 +68,15 @@ class GamePage:
         if p1_is_agent:
             if p1_agent_path.find("dqn", 0, len(p1_agent_path)) != -1:
                 obs_mode = "dqn"
-                obs_type = "rgb_image"
+                obs_type = "grayscale_image"
             elif p1_agent_path.find("c51", 0, len(p1_agent_path)) != -1:
                 obs_mode = "dqn"
-                obs_type = "rgb_image"
+                obs_type = "grayscale_image"
+        elif p2_is_agent:
+            if p2_agent_path.find("dqn", 0, len(p2_agent_path)) != -1:
+                obs_type = "grayscale_image"
+            elif p2_agent_path.find("c51", 0, len(p2_agent_path)) != -1:
+                obs_type = "grayscale_image"
 
         if is_multiplayer:
             self.env = BaseAtariEnv(game=game.lower(),
@@ -60,7 +85,11 @@ class GamePage:
                                     env_name=game.lower(),
                                     obs_type=obs_type,
                                     render_mode="rgb_array")
-            self.env = reshape_v0(frame_stack_v1(resize_v1(color_reduction_v0(self.env, 'full'), x_size=84, y_size=84), 4), (4, 84, 84))
+
+            # TODO(lars): Do reshape for ram observation?
+            if obs_type == "grayscale_image":
+                self.env = frame_stack_v1(resize_v1(self.env, x_size=84, y_size=84), 4)
+
         else:
             self.env = HackAtari(game,
                                  modifs=modifs,
@@ -73,9 +102,11 @@ class GamePage:
 
         if p1_is_agent and not is_multiplayer:
             _, self.policies['first_0'] = load_agent(p1_agent_path, self.env, "cpu")
-        elif p1_is_agent and p2_is_agent:
-            _, self.policies['first_0'] = load_multiplayer_agent(p1_agent_path, self.env.unwrapped.possible_agents[0], self.env.unwrapped, "cpu")
-            _, self.policies['second_0'] = load_multiplayer_agent(p2_agent_path, self.env.unwrapped.possible_agents[1], self.env.unwrapped, "cpu")
+        else:
+            if p1_is_agent:
+                _, self.policies['first_0'] = load_multiplayer_agent(p1_agent_path, self.env.unwrapped.possible_agents[0], self.env.unwrapped, "cpu")
+            if p2_is_agent:
+                _, self.policies['second_0'] = load_multiplayer_agent(p2_agent_path, self.env.unwrapped.possible_agents[1], self.env.unwrapped, "cpu")
 
         if not is_multiplayer:
             self.obs, _ = self.env.reset()
@@ -120,11 +151,11 @@ class GamePage:
 
         if self.is_multiplayer:
             if self.p1_is_agent:
-                observation, reward, termination, truncation, info = self.env.last()
+                obs, reward, termination, truncation, info = self.env.last()
                 if termination or truncation:
                     action = None
                 else:
-                    action = self.policies['first_0'](torch.Tensor(observation).unsqueeze(0))[0]
+                    action = self.policies['first_0'](torch.Tensor(np.transpose(obs, (2, 0, 1))).unsqueeze(0))[0]
             else:
                 if self.pressed_keys_p1 in self.keys2action_p1.keys():
                     action = self.keys2action_p1[self.pressed_keys_p1]
@@ -134,11 +165,11 @@ class GamePage:
             self.env.step(action)
 
             if self.p2_is_agent:
-                observation, reward, termination, truncation, info = self.env.last()
+                obs, reward, termination, truncation, info = self.env.last()
                 if termination or truncation:
                     action = None
                 else:
-                    action = self.policies['second_0'](torch.Tensor(observation).unsqueeze(0))[0]
+                    action = self.policies['second_0'](torch.Tensor(np.transpose(obs, (2, 0, 1))).unsqueeze(0))[0]
             else:
                 if self.pressed_keys_p2 in self.keys2action_p2.keys():
                     action = self.keys2action_p2[self.pressed_keys_p2]
@@ -162,8 +193,6 @@ class GamePage:
 
         self.tr += self.reward
         if self.terminated or self.truncated:
-            # print(info)
-            # print(self.tr)
             self.tr = 0
             self.env.reset()
             # Navigate to some game over screen?
@@ -184,3 +213,19 @@ class GamePage:
 
         # Call the JavaScript update function
         ui.run_javascript(f"updateCanvas('{base64_pixel_data}')")
+
+        # if self.is_multiplayer:
+        #     obs, _, _, _, _ = self.env.last()
+        #     # grayscale_image = np.transpose(obs, (2, 0, 1))
+        #     grayscale_image = np.delete(obs, [1, 2, 3], 2)
+        #     # grayscale_image = np.delete(grayscale_image, 0, 0)
+        #     # grayscale_image = np.delete(grayscale_image, 0, 0)
+        #     # grayscale_image = np.transpose(grayscale_image, (1, 2, 0))
+        #     grayscale_image = np.concatenate([grayscale_image, 255 * np.zeros((84, 84, 1), dtype=np.uint8)], axis=-1)
+        #     grayscale_image = np.concatenate([grayscale_image, 255 * np.zeros((84, 84, 1), dtype=np.uint8)], axis=-1)
+        #     grayscale_image = np.concatenate([grayscale_image, 255 * np.ones((84, 84, 1), dtype=np.uint8)], axis=-1)
+        #     pixel_data = grayscale_image.tobytes()
+        #
+        #     base64_pixel_data = b64encode(pixel_data).decode("utf-8")
+        #
+        #     ui.run_javascript(f"updateGrayCanvas('{base64_pixel_data}')")
