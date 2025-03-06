@@ -1,6 +1,11 @@
 import numpy as np
-from graphviz import Digraph
 from utils import action_dict
+from nicegui import ui
+
+
+red = '<span style="color: red";>'
+gray = '<span style="color: gray";>'
+end = '</span>'
 
 
 class Feature:
@@ -31,24 +36,29 @@ class Feature:
     def get_bound(self):
         temp = False
         width = 10  # Einheitliche Breite für Zahlen & "Unknown"
-        middle_width = 12  # Breite für x[...] (zentriert)
+        middle_width = 14  # Breite für x[...] (zentriert)
+        operator_width = 4  # Platz für "<=" und "<"
 
         # Formatierung der unteren Grenze
         if self.lower_bound is not None:
-            lower = f"{self.lower_bound: .2f}".rjust(width) + " \033[31m<=\033[0m "
+            lower = f"{self.lower_bound: .2f}".rjust(width) + red + " <= " + end
             temp = True
         else:
-            lower = "-\u221e".rjust(width) + " \033[31m<=\033[0m "
+            lower = "-\u221e".rjust(width) + red + " <= " + end
 
         # Formatierung der oberen Grenze
         if self.upper_bound is not None:
-            upper = f" \033[31m<\033[0m {self.upper_bound: .2f}".ljust(width + 6)
+            upper = red + " < " + end + f"{self.upper_bound: .2f}".ljust(width)
             temp = True
         else:
-            upper = f" \033[31m<\033[0m \u221e".ljust(width + 6)
+            upper = red + " < " + end + f" \u221e".ljust(width)
+
+        # Sicherstellen, dass <= und < exakt untereinander stehen
+        lower = lower.rjust(width + operator_width)
+        upper = upper.rjust(width + operator_width)
 
         if temp:
-            return lower + self.featurename.center(middle_width) + upper
+            return f"<pre>{lower}{self.featurename.center(middle_width + 7)}{upper}</pre>"
         else:
             return None
 
@@ -77,7 +87,7 @@ class Decisiontree:
         # if obs[feature] <= threshold: Do leftchild Next (True) 
         if obs[feature] <= threshold:
             temp.set_upper_bound(threshold)
-            ret = ret + "\t" * tabs + f"{temp.get_name()}\033[90m({obs[feature]: .2f})\033[0m \033[31m <= \033[0m {threshold: .2f}\n"
+            ret = ret + "&nbsp;&nbsp;&nbsp;&nbsp;" * tabs + f"{temp.get_name()}({gray}{obs[feature]: .2f}{end}) {red} <= {end}  {threshold: .2f}<br>"
             features[feature] = temp
             left_child = self.model.tree_.children_left[node_id]
             if self.values_change(node_id, nodes):
@@ -88,7 +98,7 @@ class Decisiontree:
         # if obs[feature] > threshold: do rightChild Next (False)
         else:
             temp.set_lower_bound(threshold)
-            ret = ret + "\t" * tabs + f"{temp.get_name()}\033[90m({obs[feature]: .2f})\033[0m \033[31m > \033[0m {threshold: .2f}\n"
+            ret = ret + "&nbsp;&nbsp;&nbsp;&nbsp;" * tabs + f"{temp.get_name()}({gray}{obs[feature]: .2f}{end}) {red} > {end} {threshold: .2f}<br>"
             features[feature] = temp
             right_child = self.model.tree_.children_right[node_id]
             if self.values_change(node_id, nodes):
@@ -130,14 +140,14 @@ class Decisiontree:
     def getPath(self, obs):
         nodes = self.getDecision(obs)
         features = dict()
-        ret,tabs = self.traverse(0,nodes, obs, features, 0,"")
-        ret = ret + "\n" + f"Choosen Action: \033[31m {self.get_value(nodes[-1])}\033[0m \n"
-        ret = ret + "\n" + "Feature Evaluation:" 
-        for feat in features.values():
-            ret = ret + "\n" + "\t" + feat.get_bound()
+        ret,tabs = self.traverse(0,nodes, obs, features, 0,"<pre><b>Decissions:</b><br>")
+        ret = ret + "<br>" + f"<b>Choosen Action: {red} {self.get_value(nodes[-1])} {end} </b><br>"
+        ret = ret + "<br>" + "<b>Feature Evaluation:</b>" 
         
-        return ret
-        print(ret)
+        for feat in features.values():
+            ret = ret + "&nbsp;&nbsp;&nbsp;&nbsp;" + feat.get_bound() 
+        
+        return ret +"</pre>"
     
     def getRandomPath(self):
         random_obs = np.random.rand(self.model.n_features_in_)* 20 - 10

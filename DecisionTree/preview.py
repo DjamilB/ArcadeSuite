@@ -4,8 +4,8 @@ from Decisiontree import Decisiontree
 from utils import getViper
 from nicegui import ui
 
-game = "Skiing"
-reward = "human" #"env"
+game = "Boxing"
+reward = "env" #"human"
 
 def get_feature_names (game, reward):
     env_str = f"ALE/{game}-v5"
@@ -25,7 +25,6 @@ def get_feature_names (game, reward):
 model = getViper(f"{game}_seed0_reward-{reward}_oc_pruned-extraction")
 temp = Decisiontree(model, get_feature_names(game,reward))
 ret = temp.getRandomPath()
-with ui.row():
-        ui.label(ret).style('white-space: pre-wrap; word-wrap: break-word;')
+ui.html(ret)
 ui.run(title='DecisionTree')
 

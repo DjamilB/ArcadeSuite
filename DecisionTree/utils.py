@@ -47,11 +47,16 @@ def get_feature_names (game, reward):
     ff_file_path = Path(f"../SCoBots/resources/checkpoints/{game}_seed0_reward-{reward}_oc_pruned")
     pruned_ff_name = f"pruned_{game.lower()}.yaml"
 
+    if not ff_file_path.exists():
+        print(f"There is no Checkpoints: {ff_file_path}")
+        print(f"Check viper extract in SCoBot")
+        return None
+
     env = Environment(env_str,
                     focus_dir=ff_file_path,
                     focus_file=pruned_ff_name,
                     hide_properties=False,
-                    draw_features=True, # implement feature attribution
-                    reward=0) #env reward only for evaluation
+                    draw_features=True, 
+                    reward=0) 
 
     return env.get_vector_entry_descriptions()         
