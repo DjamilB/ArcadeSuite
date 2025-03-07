@@ -17,6 +17,11 @@ For Ubuntu:
 sudo apt install pkg-config libcairo2-dev gcc python3.9-dev libgirepository1.0-dev
 ````
 
+For Arch:
+```bash
+sudo pacman -S pkgconf cairo libgirepository
+```
+
 Then init and update the submodules
 ````bash
 git submodule init
@@ -57,6 +62,9 @@ wget https://hessenbox.tu-darmstadt.de/dl/fiPLH36Zwi8EVv8JaLU4HpE2/resources_all
 unzip resources.zip
 rm resources.zip
 ````
+
+## Running this app
+To run this app you just have to go to the 'arcadesuite' directory and run the 'main.py' from there.
 
 
 ## Supported Games
