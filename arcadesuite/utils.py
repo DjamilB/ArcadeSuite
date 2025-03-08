@@ -17,8 +17,9 @@ head_html = '''
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
             <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
             <style>
-                body {
+                html, body {
                     background-color: bisque;
+                    overflow: hidden;                   
                     font-family: "VT323", monospace;
                     font-size: 18px;
                     font-weight: 400;
