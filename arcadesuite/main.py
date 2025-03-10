@@ -15,6 +15,8 @@ CARD_COLUMNS = 6
 # Uncomment to open Web Inspector
 # app.native.start_args["debug"] = True
 
+app.add_static_files(url_path="/static/javascript", local_directory=os.path.join(os.path.dirname(__file__), 'javascript'))
+
 game_page = pages.GamePage()
 select_page = pages.Selection(game_page)
 
@@ -71,4 +73,4 @@ def main_page():
     ui.keyboard(on_key=handle_key)
 
 
-ui.run(title="Arcade Suite", native=False, dark=False, window_size=(900, 1050))
+ui.run(title="Arcade Suite", native=False, dark=False, window_size=(1000, 900))

@@ -283,7 +283,7 @@
         "title": "Skiing"
     },
     "Breakout": {
-        "multiplayer": true,
+        "multiplayer": false,
         "modifs": {
             "Drift direction of the ball": {
                 "Default": "",

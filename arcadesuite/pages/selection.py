@@ -35,6 +35,8 @@ class Selection:
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
                 with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
+                    if self.meta["multiplayer"]:
+                        self._agent_cards.append(elements.CarouselCard("Multiplayer", {"Off": False, "On": True}))
                     self._agent_cards.append(elements.CarouselCard("Player1", {"Player": "Player", "Agent": "Agent"}))
                     if self.p1_is_agent:
                         self._agent_cards[-1].next()
@@ -46,10 +48,12 @@ class Selection:
 
                     if self.meta["multiplayer"]:
                         self._agent_cards.append(elements.CarouselCard("Player2", {"Player": "Player", "Agent": "Agent"}))
+                        if not self.is_multiplayer:
+                            self._agent_cards[-1].deactivate()
                         if self.p2_is_agent:
                             self._agent_cards[-1].next()
                         self._agent_cards.append(elements.LabelCard("Select Agent"))
-                        if not self.p2_is_agent:
+                        if not self.p2_is_agent or not self.is_multiplayer:
                             self._agent_cards[-1].deactivate()
                         if self.p2_agent_path != "":
                             self._agent_cards[-1].set_text(f"Agent: {self.p2_agent_path}")
@@ -86,6 +90,18 @@ class Selection:
                     for modif in self.modifs:
                         if isinstance(self.meta["modifs"][modif], dict):
                             self._modif_cards.append(elements.CarouselCard(modif, self.meta["modifs"][modif]).classes("q-pr-md"))
+
+                            n = 0
+                            found = False
+                            for m in self.meta["modifs"][modif]:
+                                if self.meta["modifs"][modif][m] in self.selected_modifs:
+                                    found = True
+                                    break
+                                n += 1
+
+                            if found:
+                                for i in range(n):
+                                    self._modif_cards[-1].next()
                         else:
                             self._modif_cards.append(elements.CheckboxCard(modif).classes("q-pr-md"))
                             if modif in self.selected_modifs:
@@ -106,6 +122,7 @@ class Selection:
         self.p2_is_agent = False
         self.p1_agent_path = ""
         self.p2_agent_path = ""
+        self.is_multiplayer = False
 
         self.modifs = list()
         for modif in self.meta["modifs"]:
@@ -132,7 +149,13 @@ class Selection:
                 ui.navigate.to("/")
             elif e.key == "Enter":
                 if self._selection_cards[self._current_selection_index].get_text() == "Play":
-                    self._game_page.populate(self.selected_game, self.selected_modifs, self.p1_is_agent, self.p1_agent_path)
+                    self._game_page.populate(self.selected_game,
+                                             self.selected_modifs,
+                                             self.p1_is_agent,
+                                             self.p1_agent_path,
+                                             self.is_multiplayer,
+                                             self.p2_is_agent if self.is_multiplayer else False,
+                                             self.p2_agent_path)
                     ui.navigate.to("/game_page")
                 else:
                     ui.navigate.to(f"/selection/{self._selection_cards[self._current_selection_index].get_text()}")
@@ -169,13 +192,22 @@ class Selection:
                             self._agent_cards[self._current_agent_index + 1].activate()
                         else:
                             self._agent_cards[self._current_agent_index + 1].deactivate()
-                    else:
+                    elif self._agent_cards[self._current_agent_index].get_text() == "Player2":
                         self.is_p1 = False
                         self.p2_is_agent = self._agent_cards[self._current_agent_index].get_current() == "Agent"
                         if self.p2_is_agent:
                             self._agent_cards[self._current_agent_index + 1].activate()
                         else:
                             self._agent_cards[self._current_agent_index + 1].deactivate()
+                    elif self._agent_cards[self._current_agent_index].get_text() == "Multiplayer":
+                        self.is_multiplayer = self._agent_cards[self._current_agent_index].get_current()
+                        if self._agent_cards[self._current_agent_index].get_current():
+                            self._agent_cards[-3].activate()
+                            if self.p2_is_agent:
+                                self._agent_cards[-2].activate()
+                        else:
+                            self._agent_cards[-3].deactivate()
+                            self._agent_cards[-2].deactivate()
                 elif self._agent_cards[self._current_agent_index].get_text() == "Submit":
                     ui.navigate.to("/selection")
                 elif "Agent" in self._agent_cards[self._current_agent_index].get_text():
@@ -237,9 +269,11 @@ class Selection:
                 elif isinstance(self._modif_cards[self._current_modif_index], elements.CheckboxCard):
                     self._modif_cards[self._current_modif_index].toggle_box()
                 elif self._modif_cards[self._current_modif_index].get_text() == "Submit":
+                    self.selected_modifs = []
                     for card in self._modif_cards:
                         if isinstance(card, elements.CarouselCard) and card.get_current() not in self.selected_modifs:
-                            self.selected_modifs.append(card.get_current())
+                            if card.get_current() != "":
+                                self.selected_modifs.append(card.get_current())
                         elif isinstance(card, elements.CheckboxCard):
                             modifier = self.meta["modifs"][card._checkbox.text]
                             if card.get_value() and modifier not in self.selected_modifs:
