@@ -74,6 +74,7 @@ To run this app you just have to go to the 'arcadesuite' directory and run the '
 ### Main Menu
 - **Arrow Keys** to navigate
 - **Enter** to select
+- **ESC** to go back
 
 ### In Game
 - **WASD** to move Player 1
@@ -81,6 +82,7 @@ To run this app you just have to go to the 'arcadesuite' directory and run the '
 - **Arrow Keys** to move Player 2
 - **CTRL** to shoot with Player 2
 - **P** to pause/resume the game
+- **N** to step the game
 - **R** to restart the game
 - **Q** to quit the game
 - **O** to toggle OC Overlay in Singleplayer
