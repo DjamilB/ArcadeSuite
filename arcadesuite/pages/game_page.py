@@ -2,12 +2,11 @@ from nicegui import ui
 from nicegui.events import KeyEventArguments
 from hackatari import HackAtari
 from pettingzoo.atari.base_atari_env import BaseAtariEnv
-from ocatari.utils import load_agent
 import ocatari
 import torch
 import numpy as np
 from base64 import b64encode
-from utils import head_html, get_keys_to_action_p1, get_keys_to_action_p2, load_multiplayer_agent
+from utils import head_html, get_keys_to_action_p1, get_keys_to_action_p2, custom_load_agent
 from supersuit import resize_v1, frame_stack_v1
 
 
@@ -35,16 +34,16 @@ class GamePage:
         obs_mode = "obj"
         obs_type = "ram"
         if p1_is_agent:
-            if p1_agent_path.find("dqn", 0, len(p1_agent_path)) != -1:
+            if "dqn" in p1_agent_path:
                 obs_mode = "dqn"
                 obs_type = "grayscale_image"
-            elif p1_agent_path.find("c51", 0, len(p1_agent_path)) != -1:
+            elif "c51" in p1_agent_path:
                 obs_mode = "dqn"
                 obs_type = "grayscale_image"
         elif p2_is_agent:
-            if p2_agent_path.find("dqn", 0, len(p2_agent_path)) != -1:
+            if "dqn" in p2_agent_path:
                 obs_type = "grayscale_image"
-            elif p2_agent_path.find("c51", 0, len(p2_agent_path)) != -1:
+            elif "c51" in p2_agent_path:
                 obs_type = "grayscale_image"
 
         if is_multiplayer:
@@ -58,7 +57,6 @@ class GamePage:
             # TODO(lars): Do reshape for ram observation?
             if obs_type == "grayscale_image":
                 self.env = frame_stack_v1(resize_v1(self.env, x_size=84, y_size=84), 4)
-
         else:
             self.env = HackAtari(game,
                                  modifs=modifs,
@@ -69,13 +67,10 @@ class GamePage:
 
         self.policies = dict()
 
-        if p1_is_agent and not is_multiplayer:
-            _, self.policies['first_0'] = load_agent(p1_agent_path, self.env, "cpu")
-        else:
-            if p1_is_agent:
-                _, self.policies['first_0'] = load_multiplayer_agent(p1_agent_path, self.env.unwrapped.possible_agents[0], self.env.unwrapped, "cpu")
-            if p2_is_agent:
-                _, self.policies['second_0'] = load_multiplayer_agent(p2_agent_path, self.env.unwrapped.possible_agents[1], self.env.unwrapped, "cpu")
+        if p1_is_agent:
+            _, self.policies['first_0'] = custom_load_agent(p1_agent_path, 'first_0', self.env, is_multiplayer, "cpu")
+        if p2_is_agent:
+            _, self.policies['second_0'] = custom_load_agent(p2_agent_path, 'second_0', self.env, is_multiplayer, "cpu")
 
         if not is_multiplayer:
             self.obs, _ = self.env.reset()

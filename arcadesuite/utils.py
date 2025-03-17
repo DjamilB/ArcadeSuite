@@ -1,15 +1,8 @@
 import os
 import json
 import ale_py
-from ocatari.utils import _load_checkpoint, partial, _epsilon_greedy, PPOAgent, AtariNet, QNetwork, PPO_Obj_small
-
-try:
-    import torch
-    from torch import nn
-    from torch.distributions.categorical import Categorical
-    torch_imported = True
-except ModuleNotFoundError:
-    torch_imported = False
+from arcadesuite import load_agent
+from ocatari import utils
     
 
 head_html = '''
@@ -124,32 +117,27 @@ def get_keys_to_action_p2() -> dict[tuple[int, ...], ale_py.Action]:
     }
 
 
-def load_multiplayer_agent(opt, agent, env=None, device="cpu"):
+class FakeEnv:
+    def __init__(self, observation_space, action_space, obs_mode):
+        self.observation_space = observation_space
+        self.action_space = action_space
+        self.obs_mode = obs_mode
+
+def custom_load_agent(opt, name, env=None, is_multiplayer=False, device="cpu"):
+    if is_multiplayer:
+        if env.unwrapped.obs_type == "grayscale_image":
+            obs_mode = "dqn"
+        elif env.unwrapped.obs_type == "rgb_image":
+            obs_mode = "ori"
+        else:
+            # don't know if oc agents will work
+            obs_mode = "obj"
+
+        env = FakeEnv(env.observation_space(name), env.action_space(name), obs_mode)
+
     pth = opt if isinstance(opt, str) else opt.path
+
     if "dqn" in pth or "c51" in pth:
-        agent = AtariNet(env.action_spaces[agent].n, distributional="c51" in pth)
-        ckpt = _load_checkpoint(pth)
-        agent.load_state_dict(ckpt['estimator_state'])
-        policy = partial(_epsilon_greedy, model=agent)
-        return agent, policy
-    elif "cleanrl" in pth:
-        if device == "cpu":
-            ckpt = torch.load(pth, map_location=torch.device('cpu'))
-        else:
-            ckpt = torch.load(pth)
-        if "c51" in pth:
-            agent = QNetwork(env.action_space.n)
-            agent.load_state_dict(ckpt["model_weights"])
-        elif "ppo" in pth and env.obs_mode == "dqn":
-            agent = PPOAgent(env)
-            agent.load_state_dict(ckpt["model_weights"])
-        elif "ppo" in pth and env.obs_mode == "obj":
-            agent = PPO_Obj_small(env, len(env.ns_state),
-                                  env.buffer_window_size, device)
-            agent.load_state_dict(ckpt["model_weights"])
-        else:
-            return None
-
-        policy = agent.draw_action
-
-    return agent, policy
+        return utils.load_agent(opt, env, device)
+    else:
+        return load_agent.load_agent(opt, env, device)
