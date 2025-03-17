@@ -4,7 +4,7 @@ multiprocessing.set_start_method("spawn", force=True)
 
 from nicegui import ui, app
 from nicegui.events import KeyEventArguments
-from utils import get_games, get_json
+from utils import get_games, get_json, head_html
 import os
 
 import elements
@@ -14,6 +14,8 @@ CARD_COLUMNS = 6
 
 # Uncomment to open Web Inspector
 # app.native.start_args["debug"] = True
+
+app.add_static_files(url_path="/static/javascript", local_directory=os.path.join(os.path.dirname(__file__), 'javascript'))
 
 game_page = pages.GamePage()
 select_page = pages.Selection(game_page)
@@ -30,7 +32,8 @@ def main_page():
     selected_game = GAMES[select_index]
     cards = dict()
 
-    ui.add_head_html("<style>body {background-color: bisque;}</style>")
+    ui.add_head_html(head_html)
+
     with ui.grid(columns=CARD_COLUMNS):
         for game in GAMES:
             cards[game] = elements.GameCard(game)
@@ -40,7 +43,7 @@ def main_page():
 
     def handle_key(e: KeyEventArguments):
         global select_index
-        global selected_game
+        nonlocal selected_game
         prev_select = select_index
         if e.action.keydown:
             if e.key.arrow_left:
@@ -70,4 +73,4 @@ def main_page():
     ui.keyboard(on_key=handle_key)
 
 
-ui.run(title="Arcade Suite", native=False, dark=False, window_size=(900, 1050))
+ui.run(title="Arcade Suite", native=False, dark=False, window_size=(1000, 900))
