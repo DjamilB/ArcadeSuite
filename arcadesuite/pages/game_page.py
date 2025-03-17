@@ -79,9 +79,12 @@ class GamePage:
         self.nstep = 1
         self.tr = 0
 
-        self.env.render_oc_overlay = True
-        self.env.render()
-        self.env.render_oc_overlay = False
+        if not self.is_multiplayer:
+            self.env.render_oc_overlay = True
+            self.env.render()
+            self.env.render_oc_overlay = False
+
+        self.paused = False
 
         self.keys2action_p1 = get_keys_to_action_p1()
         self.keys2action_p2 = get_keys_to_action_p2()
@@ -93,6 +96,18 @@ class GamePage:
             if e.key == "q":
                 self.timer.cancel()
                 ui.navigate.to("/")
+            elif e.key == "p":
+                self.paused = True
+                self.timer.deactivate()
+            elif e.key == "n":
+                if self.paused:
+                    self.step_game()
+            elif e.key == "r":
+                self.paused = False
+                self.timer.activate()
+            elif e.key == "o":
+                if not self.is_multiplayer:
+                    self.env.render_oc_overlay = not self.env.render_oc_overlay
             elif (str(e.key),) in self.keys2action_p1.keys():
                 self.current_keys_down_p1.add(str(e.key))
             elif (str(e.key),) in self.keys2action_p2.keys():
@@ -103,8 +118,7 @@ class GamePage:
             if (str(e.key),) in self.keys2action_p2.keys():
                 self.current_keys_down_p2.remove(str(e.key))
 
-    # TODO(lars): finish multiplayer support
-    async def step_game(self):
+    def step_game(self):
         self.pressed_keys_p1 = list(self.current_keys_down_p1)
         self.pressed_keys_p1.sort()
         self.pressed_keys_p1 = tuple(self.pressed_keys_p1)
