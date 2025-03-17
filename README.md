@@ -69,6 +69,21 @@ For some pre-trained Agents refer to the download link in the models [README](ht
 ## Running this app
 To run this app you just have to go to the 'arcadesuite' directory and run the 'main.py' from there.
 
+## Controls
+
+### Main Menu
+- **Arrow Keys** to navigate
+- **Enter** to select
+
+### In Game
+- **WASD** to move Player 1
+- **Space** to shoot with Player 1
+- **Arrow Keys** to move Player 2
+- **CTRL** to shoot with Player 2
+- **P** to pause/resume the game
+- **R** to restart the game
+- **Q** to quit the game
+- **O** to toggle OC Overlay in Singleplayer
 
 ## Supported Games
 | Game | Singleplayer |    Multiplayer     |

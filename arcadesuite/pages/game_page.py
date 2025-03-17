@@ -97,14 +97,16 @@ class GamePage:
                 self.timer.cancel()
                 ui.navigate.to("/")
             elif e.key == "p":
-                self.paused = True
-                self.timer.deactivate()
+                self.paused = not self.paused
+                if self.paused:
+                    self.timer.deactivate()
+                else:
+                    self.timer.activate()
             elif e.key == "n":
                 if self.paused:
                     self.step_game()
             elif e.key == "r":
-                self.paused = False
-                self.timer.activate()
+                self.env.reset()
             elif e.key == "o":
                 if not self.is_multiplayer:
                     self.env.render_oc_overlay = not self.env.render_oc_overlay
