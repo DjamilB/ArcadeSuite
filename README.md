@@ -63,6 +63,9 @@ unzip resources.zip
 rm resources.zip
 ````
 
+## Agents
+For some pre-trained Agents refer to the download link in the models [README](https://github.com/k4ntz/OC_Atari/blob/master/models/README.md) in the OC_Atari repository and put the models folder in the root of this repository.
+
 ## Running this app
 To run this app you just have to go to the 'arcadesuite' directory and run the 'main.py' from there.
 
