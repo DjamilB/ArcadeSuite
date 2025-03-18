@@ -20,14 +20,14 @@ class Selection:
         def selection():
             self._selection_cards = list()
             ui.add_head_html(head_html)
-            with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
+
+            with ui.row(align_items="center").classes('h-screen w-full item-center'):
+                with ui.column(align_items="center").classes('w-[49%]'):    
                     self._selection_cards.append(elements.LabelCard("Agents"))
                     self._selection_cards.append(elements.LabelCard("Modifiers"))
                     self._selection_cards.append(elements.LabelCard("Play"))
-
-                ui.image(self.meta["img_url"]).props("fit='contain'").classes("absolute-right h-full w-[50%]")
-            self._selection_cards[self._current_selection_index].select()
+                self.detail_panel()
+            self._selection_cards[self._current_selection_index].select()   
 
             ui.keyboard(on_key=self.handle_selection_keys)
 
@@ -62,8 +62,8 @@ class Selection:
                         if self.p2_agent_path != "":
                             self._agent_cards[-1].set_text(f"Agent: {self.p2_agent_path}")
                     self._agent_cards.append(elements.LabelCard("Submit"))
-
-            ui.image(self.meta["img_url"]).props("fit='contain'").classes("absolute-right h-full w-[50%]")
+                self.detail_panel()
+            #ui.image(self.meta["img_url"]).props("fit='contain'").classes("absolute-right h-full w-[50%]")
             self._agent_cards[self._current_agent_index].select()
 
             ui.keyboard(on_key=self.handle_agent_keys)
@@ -80,7 +80,7 @@ class Selection:
                 with ui.column(align_items="start").classes("justify-center w-[50%] q-pl-md"):
                     for seed in seeds:
                         self._seed_cards.append(elements.LabelCard(f"Seed: {seed}"))
-
+                self.detail_panel()
             self._seed_cards[self._current_seed_index].select()
 
             ui.keyboard(on_key=self.handle_seed_keys)
@@ -120,7 +120,7 @@ class Selection:
                         self._type_cards.append(elements.LabelCard("Object PPO"))
                     if found_pixel_ppo:
                         self._type_cards.append(elements.LabelCard("Pixel PPO"))
-
+                self.detail_panel()
             self._type_cards[self._current_type_index].select()
 
 
@@ -144,7 +144,7 @@ class Selection:
                 with ui.column(align_items="start").classes("justify-center w-[50%] q-pl-md"):
                     for agent in agents:
                         self._agent_path_cards.append(elements.LabelCard(agent))
-
+                self.detail_panel()
             self._agent_path_cards[self._current_agent_path_index].select()
 
             ui.keyboard(on_key=self.handle_path_keys)
@@ -171,8 +171,9 @@ class Selection:
                             for i in range(n):
                                 self._modif_cards[-1].next()
                     self._modif_cards.append(elements.LabelCard("Submit").classes("q-pa-sm"))
+                self.detail_panel()
 
-            ui.image(self.meta["img_url"]).props("fit='contain'").classes("absolute-right h-full w-[50%]")
+            #ui.image(self.meta["img_url"]).props("fit='contain'").classes("absolute-right h-full w-[50%]")
             self._modif_cards[self._current_modif_index].select()
 
             ui.keyboard(on_key=self.handle_modif_keys)
@@ -210,6 +211,14 @@ class Selection:
                 if list[index]._active:
                     break
         return index
+    
+    def detail_panel(self):
+        with ui.column(align_items="center").classes('w-[49%] bg-gray-100'):
+            ui.label("Details").tailwind.font_weight('bold')
+            ui.label(f"Game: {self.selected_game}")
+            ui.label(f"Player 1: {self.p1_agent_path if self.p1_is_agent else 'Human'}")
+            ui.label(f"Player 2: {self.p2_agent_path if self.p2_is_agent else ('Human' if self.is_multiplayer else 'System')}")
+            ui.label(f"Modifications: {', '.join(self.selected_modifs) if len(self.selected_modifs) > 0 else 'None'}")
 
     def handle_selection_keys(self, e: KeyEventArguments):
         prev_index = self._current_selection_index
