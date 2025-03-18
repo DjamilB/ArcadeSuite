@@ -45,7 +45,7 @@ def main_page():
             if game == GAMES[select_index]:
                 cards[-1].select()
 
-    if not FULLSCREEN and first_start:
+    if not FULLSCREEN and first_start and NATIVE_MODE:
         app.native.main_window.maximize()
         first_start = False
 

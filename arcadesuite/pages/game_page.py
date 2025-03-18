@@ -26,10 +26,11 @@ class GamePage:
             # Debug canvas for grayscale observation data
             # ui.add_body_html("<canvas id='grayCanvas' style='border: 1px solid black;' width=84px height=84px></canvas>")
             with ui.row():
-                ui.add_body_html("<canvas id='gameCanvas' onload='onCanvasLoad()' style='border: 1px solid black;' width=640px height=840px></canvas>")
+                with ui.column():
+                    ui.html("<canvas id='gameCanvas' onload='onCanvasLoad()' style='border: 1px solid black;' width=640px height=840px></canvas>")
                 with ui.column():
                     self.tree_vis = ui.html("")
-            ui.add_body_html("<script type='text/javascript' src='static/javascript/canvas.js'></script>")
+            ui.add_head_html("<script src='static/javascript/canvas.js' defer></script>")
             ui.keyboard(on_key=self.handle_key)
 
     def populate(self, game, modifs, p1_is_agent, p1_agent_path, is_multiplayer=False, p2_is_agent=False, p2_agent_path=""):
