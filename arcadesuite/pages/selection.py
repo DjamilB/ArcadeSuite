@@ -197,24 +197,31 @@ class Selection:
         for modif in self.meta["modifs"]:
             self.modifs.append(modif)
 
+    @staticmethod
+    def handle_movement(index, list, e: KeyEventArguments):
+        if e.key.arrow_up:
+            while True:
+                if index > 0:
+                    index -= 1
+                else:
+                    index = len(list) - 1
+
+                if list[index]._active:
+                    break
+        elif e.key.arrow_down:
+            while True:
+                index = (index + 1) % len(list)
+
+                if list[index]._active:
+                    break
+        return index
+
     def handle_selection_keys(self, e: KeyEventArguments):
         prev_index = self._current_selection_index
         if e.action.keydown:
-            if e.key.arrow_up:
-                while True:
-                    if self._current_selection_index > 0:
-                        self._current_selection_index -= 1
-                    else:
-                        self._current_selection_index = len(self._selection_cards) - 1
+            self._current_selection_index = self.handle_movement(self._current_selection_index, self._selection_cards, e)
 
-                    if self._selection_cards[self._current_selection_index]._active:
-                        break
-            elif e.key.arrow_down:
-                while True:
-                    self._current_selection_index = (self._current_selection_index + 1) % len(self._selection_cards)
-                    if self._selection_cards[self._current_selection_index]._active:
-                        break
-            elif e.key == "Escape":
+            if e.key == "Escape":
                 self._current_selection_index = 0
                 ui.navigate.to("/")
             elif e.key == "Enter":
@@ -238,22 +245,9 @@ class Selection:
     def handle_agent_keys(self, e: KeyEventArguments):
         prev_index = self._current_agent_index
         if e.action.keydown:
-            if e.key.arrow_up:
-                while True:
-                    if self._current_agent_index > 0:
-                        self._current_agent_index -= 1
-                    else:
-                        self._current_agent_index = len(self._agent_cards) - 1
+            self._current_agent_index = self.handle_movement(self._current_agent_index, self._agent_cards, e)
 
-                    if self._agent_cards[self._current_agent_index]._active:
-                        break
-            elif e.key.arrow_down:
-                while True:
-                    self._current_agent_index = (self._current_agent_index + 1) % len(self._agent_cards)
-
-                    if self._agent_cards[self._current_agent_index]._active:
-                        break
-            elif e.key == "Escape":
+            if e.key == "Escape":
                 self._current_agent_index = 0
                 ui.navigate.to("/selection")
             elif e.key == "Enter":
@@ -295,22 +289,9 @@ class Selection:
         prev_index = self._current_seed_index
 
         if e.action.keydown:
-            if e.key.arrow_up:
-                while True:
-                    if self._current_seed_index > 0:
-                        self._current_seed_index -= 1
-                    else:
-                        self._current_seed_index = len(self._seed_cards) - 1
+            self._current_seed_index = self.handle_movement(self._current_seed_index, self._seed_cards, e)
 
-                    if self._seed_cards[self._current_seed_index]._active:
-                        break
-            elif e.key.arrow_down:
-                while True:
-                    self._current_seed_index = (self._current_seed_index + 1) % len(self._seed_cards)
-
-                    if self._seed_cards[self._current_seed_index]._active:
-                        break
-            elif e.key == "Escape":
+            if e.key == "Escape":
                 self._current_seed_index = 0
                 ui.navigate.to("/selection/Agents")
             elif e.key == "Enter":
@@ -324,22 +305,9 @@ class Selection:
         prev_index = self._current_type_index
 
         if e.action.keydown:
-            if e.key.arrow_up:
-                while True:
-                    if self._current_type_index > 0:
-                        self._current_type_index -= 1
-                    else:
-                        self._current_type_index = len(self._type_cards) - 1
+            self._current_type_index = self.handle_movement(self._current_type_index, self._type_cards, e)
 
-                    if self._type_cards[self._current_type_index]._active:
-                        break
-            elif e.key.arrow_down:
-                while True:
-                    self._current_type_index = (self._current_type_index + 1) % len(self._type_cards)
-
-                    if self._type_cards[self._current_type_index]._active:
-                        break
-            elif e.key == "Escape":
+            if e.key == "Escape":
                 self._current_type_index = 0
                 ui.navigate.to("/selection/Agents/seed")
             elif e.key == "Enter":
@@ -358,22 +326,9 @@ class Selection:
     def handle_path_keys(self, e: KeyEventArguments):
         prev_index = self._current_agent_path_index
         if e.action.keydown:
-            if e.key.arrow_up:
-                while True:
-                    if self._current_agent_path_index > 0:
-                        self._current_agent_path_index -= 1
-                    else:
-                        self._current_agent_path_index = len(self._agent_path_cards) - 1
+            self._current_agent_path_index = self.handle_movement(self._current_agent_path_index, self._agent_path_cards, e)
 
-                    if self._agent_path_cards[self._current_agent_path_index]._active:
-                        break
-            elif e.key.arrow_down:
-                while True:
-                    self._current_agent_path_index = (self._current_agent_path_index + 1) % len(self._agent_path_cards)
-
-                    if self._agent_path_cards[self._current_agent_path_index]._active:
-                        break
-            elif e.key == "Escape":
+            if e.key == "Escape":
                 self._current_agent_path_index = 0
                 ui.navigate.to("/selection/Agents/type")
             elif e.key == "Enter":
@@ -394,22 +349,9 @@ class Selection:
     def handle_modif_keys(self, e: KeyEventArguments):
         prev_index = self._current_modif_index
         if e.action.keydown:
-            if e.key.arrow_up:
-                while True:
-                    if self._current_modif_index > 0:
-                        self._current_modif_index -= 1
-                    else:
-                        self._current_modif_index = len(self._modif_cards) - 1
+            self._current_modif_index = self.handle_movement(self._current_modif_index, self._modif_cards, e)
 
-                    if self._modif_cards[self._current_modif_index]._active:
-                        break
-            elif e.key.arrow_down:
-                while True:
-                    self._current_modif_index = (self._current_modif_index + 1) % len(self._modif_cards)
-
-                    if self._modif_cards[self._current_modif_index]._active:
-                        break
-            elif e.key == "Escape":
+            if e.key == "Escape":
                 self._current_modif_index = 0
                 ui.navigate.to("/selection")
             elif e.key == "Enter":
