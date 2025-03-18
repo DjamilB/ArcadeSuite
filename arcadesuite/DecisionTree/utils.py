@@ -26,8 +26,8 @@ action_dict = {
     17: "DOWNLEFTFIRE"
 }
 
-def get_viper(game, reward):
-    base_path = f"../SCoBots/resources/viper_extracts/extract_output/{game}_seed0_reward-{reward}_oc_pruned-extraction"
+def get_viper(game, reward, seed):
+    base_path = f"../SCoBots/resources/viper_extracts/extract_output/{game}_seed{seed}_reward-{reward}_oc_pruned-extraction"
     file_name = None
     for file in os.listdir(base_path):
         if file.endswith("_best.viper"):
@@ -42,10 +42,10 @@ def get_viper(game, reward):
 
     return load(file_path)
 
-def get_features(game, reward):    
+def get_features(game, reward, seed):    
     env_str = f"ALE/{game}-v5"
 
-    ff_file_path = Path(f"../SCoBots/resources/checkpoints/{game}_seed0_reward-{reward}_oc_pruned")
+    ff_file_path = Path(f"../SCoBots/resources/checkpoints/{game}_seed{seed}_reward-{reward}_oc_pruned")
     pruned_ff_name = f"pruned_{game.lower()}.yaml"
     
     if not ff_file_path.exists():        
@@ -63,7 +63,7 @@ def get_features(game, reward):
         sys.stdout = sys.__stdout__
         return env.get_vector_entry_descriptions() 
 
-def get_Decisiontree_data(game, reward):
+def get_Decisiontree_data(game, reward, seed):
     """
     Retrieves the Viper decision tree and feature descriptions for a given game and reward-type.
 
@@ -84,10 +84,10 @@ def get_Decisiontree_data(game, reward):
         Messages indicating whether the Viper tree and feature names were found or not.
     """
  
-    model = get_viper(game, reward)
+    model = get_viper(game, reward, seed)
 
     if model:
-        features = get_features(game, reward)
+        features = get_features(game, reward, seed)
 
         return model, features
     else:
