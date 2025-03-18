@@ -1,7 +1,7 @@
 import os
 import json
 import ale_py
-from arcadesuite import load_agent
+import load_agent
 from ocatari import utils
     
 
