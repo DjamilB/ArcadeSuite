@@ -157,24 +157,19 @@ class Selection:
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
                 with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
                     for modif in self.modifs:
-                        if isinstance(self.meta["modifs"][modif], dict):
-                            self._modif_cards.append(elements.CarouselCard(modif, self.meta["modifs"][modif]).classes("q-pr-md"))
+                        self._modif_cards.append(elements.CarouselCard(modif, self.meta["modifs"][modif]).classes("q-pr-md"))
 
-                            n = 0
-                            found = False
-                            for m in self.meta["modifs"][modif]:
-                                if self.meta["modifs"][modif][m] in self.selected_modifs:
-                                    found = True
-                                    break
-                                n += 1
+                        n = 0
+                        found = False
+                        for m in self.meta["modifs"][modif]:
+                            if self.meta["modifs"][modif][m] in self.selected_modifs:
+                                found = True
+                                break
+                            n += 1
 
-                            if found:
-                                for i in range(n):
-                                    self._modif_cards[-1].next()
-                        else:
-                            self._modif_cards.append(elements.CheckboxCard(modif).classes("q-pr-md"))
-                            if modif in self.selected_modifs:
-                                self._modif_cards[-1].toggle_box()
+                        if found:
+                            for i in range(n):
+                                self._modif_cards[-1].next()
                     self._modif_cards.append(elements.LabelCard("Submit").classes("q-pa-sm"))
 
             ui.image(self.meta["img_url"]).props("fit='contain'").classes("absolute-right h-full w-[50%]")
@@ -357,21 +352,13 @@ class Selection:
             elif e.key == "Enter":
                 if isinstance(self._modif_cards[self._current_modif_index], elements.CarouselCard):
                     self._modif_cards[self._current_modif_index].next()
-                elif isinstance(self._modif_cards[self._current_modif_index], elements.CheckboxCard):
-                    self._modif_cards[self._current_modif_index].toggle_box()
                 elif self._modif_cards[self._current_modif_index].get_text() == "Submit":
                     self.selected_modifs = []
                     for card in self._modif_cards:
                         if isinstance(card, elements.CarouselCard) and card.get_current() not in self.selected_modifs:
                             if card.get_current() != "":
                                 self.selected_modifs.append(card.get_current())
-                        elif isinstance(card, elements.CheckboxCard):
-                            modifier = self.meta["modifs"][card._checkbox.text]
-                            if card.get_value() and modifier not in self.selected_modifs:
-                                self.selected_modifs.append(modifier)
-                            elif modifier in self.selected_modifs:
-                                self.selected_modifs.remove(modifier)
+                    self._current_modif_index = 0
                     ui.navigate.to("/selection")
-
         self._modif_cards[prev_index].unselect()
         self._modif_cards[self._current_modif_index].select()
