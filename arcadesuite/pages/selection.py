@@ -11,6 +11,8 @@ class Selection:
         self._game_page = game_page
         self._current_selection_index = 0
         self._current_agent_index = 0
+        self._current_seed_index = 0
+        self._current_type_index = 0
         self._current_agent_path_index = 0
         self._current_modif_index = 0
 
@@ -37,6 +39,8 @@ class Selection:
                 with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
                     if self.meta["multiplayer"]:
                         self._agent_cards.append(elements.CarouselCard("Multiplayer", {"Off": False, "On": True}))
+                        if self.is_multiplayer:
+                            self._agent_cards[-1].next()
                     self._agent_cards.append(elements.CarouselCard("Player1", {"Player": "Player", "Agent": "Agent"}))
                     if self.p1_is_agent:
                         self._agent_cards[-1].next()
@@ -64,21 +68,86 @@ class Selection:
 
             ui.keyboard(on_key=self.handle_agent_keys)
 
-        @ui.page("/selection/Agents/path")
-        def agent_path():
-            self._agent_path_cards = list()
-            self.agents = os.listdir(f"../models/{self.selected_game}/0")
+        @ui.page("/selection/Agents/seed")
+        def seed_selection_page():
+            self._seed_cards = list()
+
+            seeds = os.listdir(f"../models/{self.selected_game}")
+            seeds.sort()
 
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
-                    for agent in self.agents:
+                with ui.column(align_items="start").classes("justify-center w-[50%] q-pl-md"):
+                    for seed in seeds:
+                        self._seed_cards.append(elements.LabelCard(f"Seed: {seed}"))
+
+            self._seed_cards[self._current_seed_index].select()
+
+            ui.keyboard(on_key=self.handle_seed_keys)
+
+        @ui.page("/selection/Agents/type")
+        def type_selection_page():
+            self._type_cards = list()
+
+            agents = os.listdir(f"../models/{self.selected_game}/{self.seed}")
+
+            found_dqn = False
+            found_obj_ppo = False
+            found_pixel_ppo = False
+            found_c51 = False
+
+            for agent in agents:
+                if "dqn" in agent:
+                    found_dqn = True
+                if "obj_ppo" in agent:
+                    found_obj_ppo = True
+                if "pixel_ppo" in agent:
+                    found_pixel_ppo = True
+                if "c51" in agent:
+                    found_c51 = True
+
+                if found_dqn and found_obj_ppo and found_pixel_ppo and found_c51:
+                    break
+
+            ui.add_head_html(head_html)
+            with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
+                with ui.column(align_items="start").classes("justify-center w-[50%] q-pl-md"):
+                    if found_dqn:
+                        self._type_cards.append(elements.LabelCard("DQN"))
+                    if found_c51:
+                        self._type_cards.append(elements.LabelCard("C51"))
+                    if found_obj_ppo:
+                        self._type_cards.append(elements.LabelCard("Object PPO"))
+                    if found_pixel_ppo:
+                        self._type_cards.append(elements.LabelCard("Pixel PPO"))
+
+            self._type_cards[self._current_type_index].select()
+
+
+            ui.keyboard(on_key=self.handle_type_keys)
+
+        @ui.page("/selection/Agents/path")
+        def agent_selection_page():
+            all_agents = os.listdir(f"../models/{self.selected_game}/{self.seed}")
+            agents = list()
+
+            for agent in all_agents:
+                if self.type in agent:
+                    agents.append(agent)
+
+            agents.sort()
+
+            self._agent_path_cards = list()
+
+            ui.add_head_html(head_html)
+            with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
+                with ui.column(align_items="start").classes("justify-center w-[50%] q-pl-md"):
+                    for agent in agents:
                         self._agent_path_cards.append(elements.LabelCard(agent))
 
-            ui.image(self.meta["img_url"]).props("fit='contain'").classes("absolute-right h-full w-[50%]")
             self._agent_path_cards[self._current_agent_path_index].select()
 
-            ui.keyboard(on_key=self.handle_agent_path_keys)
+            ui.keyboard(on_key=self.handle_path_keys)
 
         @ui.page("/selection/Modifiers")
         def modifs():
@@ -146,6 +215,7 @@ class Selection:
                     if self._selection_cards[self._current_selection_index]._active:
                         break
             elif e.key == "Escape":
+                self._current_selection_index = 0
                 ui.navigate.to("/")
             elif e.key == "Enter":
                 if self._selection_cards[self._current_selection_index].get_text() == "Play":
@@ -156,6 +226,8 @@ class Selection:
                                              self.is_multiplayer,
                                              self.p2_is_agent if self.is_multiplayer else False,
                                              self.p2_agent_path)
+
+                    self._current_selection_index = 0
                     ui.navigate.to("/game_page")
                 else:
                     ui.navigate.to(f"/selection/{self._selection_cards[self._current_selection_index].get_text()}")
@@ -181,6 +253,9 @@ class Selection:
 
                     if self._agent_cards[self._current_agent_index]._active:
                         break
+            elif e.key == "Escape":
+                self._current_agent_index = 0
+                ui.navigate.to("/selection")
             elif e.key == "Enter":
                 if isinstance(self._agent_cards[self._current_agent_index], elements.CarouselCard):
                     self._agent_cards[self._current_agent_index].next()
@@ -211,12 +286,76 @@ class Selection:
                 elif self._agent_cards[self._current_agent_index].get_text() == "Submit":
                     ui.navigate.to("/selection")
                 elif "Agent" in self._agent_cards[self._current_agent_index].get_text():
-                    ui.navigate.to("/selection/Agents/path")
+                    ui.navigate.to("/selection/Agents/seed")
 
         self._agent_cards[prev_index].unselect()
         self._agent_cards[self._current_agent_index].select()
 
-    def handle_agent_path_keys(self, e: KeyEventArguments):
+    def handle_seed_keys(self, e: KeyEventArguments):
+        prev_index = self._current_seed_index
+
+        if e.action.keydown:
+            if e.key.arrow_up:
+                while True:
+                    if self._current_seed_index > 0:
+                        self._current_seed_index -= 1
+                    else:
+                        self._current_seed_index = len(self._seed_cards) - 1
+
+                    if self._seed_cards[self._current_seed_index]._active:
+                        break
+            elif e.key.arrow_down:
+                while True:
+                    self._current_seed_index = (self._current_seed_index + 1) % len(self._seed_cards)
+
+                    if self._seed_cards[self._current_seed_index]._active:
+                        break
+            elif e.key == "Escape":
+                self._current_seed_index = 0
+                ui.navigate.to("/selection/Agents")
+            elif e.key == "Enter":
+                self.seed = self._seed_cards[self._current_seed_index].get_text().split(" ")[1]
+                ui.navigate.to(f"/selection/Agents/type")
+
+        self._seed_cards[prev_index].unselect()
+        self._seed_cards[self._current_seed_index].select()
+
+    def handle_type_keys(self, e: KeyEventArguments):
+        prev_index = self._current_type_index
+
+        if e.action.keydown:
+            if e.key.arrow_up:
+                while True:
+                    if self._current_type_index > 0:
+                        self._current_type_index -= 1
+                    else:
+                        self._current_type_index = len(self._type_cards) - 1
+
+                    if self._type_cards[self._current_type_index]._active:
+                        break
+            elif e.key.arrow_down:
+                while True:
+                    self._current_type_index = (self._current_type_index + 1) % len(self._type_cards)
+
+                    if self._type_cards[self._current_type_index]._active:
+                        break
+            elif e.key == "Escape":
+                self._current_type_index = 0
+                ui.navigate.to("/selection/Agents/seed")
+            elif e.key == "Enter":
+                text = self._type_cards[self._current_type_index].get_text()
+
+                self.type = text.lower().replace(" ", "_")
+                if self.type == "object_ppo":
+                    self.type = "obj_ppo"
+                print(self.type)
+
+                ui.navigate.to("/selection/Agents/path")
+
+        self._type_cards[prev_index].unselect()
+        self._type_cards[self._current_type_index].select()
+
+    def handle_path_keys(self, e: KeyEventArguments):
         prev_index = self._current_agent_path_index
         if e.action.keydown:
             if e.key.arrow_up:
@@ -234,12 +373,19 @@ class Selection:
 
                     if self._agent_path_cards[self._current_agent_path_index]._active:
                         break
+            elif e.key == "Escape":
+                self._current_agent_path_index = 0
+                ui.navigate.to("/selection/Agents/type")
             elif e.key == "Enter":
                 text = self._agent_path_cards[self._current_agent_path_index].get_text()
                 if self.is_p1:
-                    self.p1_agent_path = f"../models/{self.selected_game}/0/{text}"
+                    self.p1_agent_path = f"../models/{self.selected_game}/{self.seed}/{text}"
                 else:
-                    self.p2_agent_path = f"../models/{self.selected_game}/0/{text}"
+                    self.p2_agent_path = f"../models/{self.selected_game}/{self.seed}/{text}"
+
+                self._current_seed_index = 0
+                self._current_type_index = 0
+                self._current_agent_path_index = 0
                 ui.navigate.to("/selection/Agents")
 
         self._agent_path_cards[prev_index].unselect()
@@ -263,6 +409,9 @@ class Selection:
 
                     if self._modif_cards[self._current_modif_index]._active:
                         break
+            elif e.key == "Escape":
+                self._current_modif_index = 0
+                ui.navigate.to("/selection")
             elif e.key == "Enter":
                 if isinstance(self._modif_cards[self._current_modif_index], elements.CarouselCard):
                     self._modif_cards[self._current_modif_index].next()
