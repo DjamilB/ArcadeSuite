@@ -2,6 +2,6 @@
 	path = HackAtari
 	url = https://github.com/k4ntz/HackAtari
 [submodule "ScoBots"]
-	path = SCoBots
+	path = ScoBots
 	url = https://github.com/k4ntz/ScoBots
 	branch = cleanup
