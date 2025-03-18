@@ -3,5 +3,4 @@
 	url = https://github.com/k4ntz/HackAtari
 [submodule "ScoBots"]
 	path = ScoBots
-	url = https://github.com/k4ntz/ScoBots
-	branch = cleanup
+	url = https://github.com/k4ntz/ScoBots.git
