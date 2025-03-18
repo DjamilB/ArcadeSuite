@@ -176,8 +176,6 @@ class GamePage:
             else:
                 action = self.policies['first_0'](torch.Tensor(self.obs).unsqueeze(0))[0]
                 self.obs, self.reward, self.terminated, self.truncated, self.info = self.env.step(action)
-                print(f"Observation\n{self.obs}")
-                print(f"Flatten Observation\n{self.obs.flatten()}")
                 temp = self.tree.get_path(self.obs.flatten())
                 self.tree_vis.set_content(temp)
 

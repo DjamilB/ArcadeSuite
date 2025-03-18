@@ -9,7 +9,7 @@ reward = "env" #"human"
        
 model, features = getViper(game, reward)
 temp = Decisiontree(model, features)
-ret = temp.getRandomPath()
+ret = temp.get_random_path()
 ui.html(ret)
 ui.run(title='DecisionTree')
 

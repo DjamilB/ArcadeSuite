@@ -1,5 +1,5 @@
 import numpy as np
-from utils import action_dict
+from DecisionTree.utils import action_dict
 from nicegui import ui
 
 # HTML constants
@@ -101,7 +101,7 @@ class Decisiontree:
             else: 
                 return ret, tabs
             
-    def getDecision(self, obs):
+    def get_decision(self, obs):
         node_id = 0  
         nodes = []  
 
@@ -132,8 +132,8 @@ class Decisiontree:
        values = np.round(self.model.tree_.value[node_id], 2)
        return  action_dict[np.argmax(values)]
 
-    def getPath(self, obs):
-        nodes = self.getDecision(obs)
+    def get_path(self, obs):
+        nodes = self.get_decision(obs)
         features = dict()
         ret,tabs = self.traverse(0,nodes, obs, features, 0,"<pre><b>Decisions:</b><br>")
         ret = ret + "<br>" + f"<b>Choosen Action: {red} {self.get_value(nodes[-1])} {end} </b><br>"
@@ -144,7 +144,7 @@ class Decisiontree:
         
         return ret +"</pre>"
     
-    def getRandomPath(self):
+    def get_random_path(self):
         random_obs = np.random.rand(self.model.n_features_in_)* 20 - 10
         return self.getPath(random_obs)
 

@@ -26,7 +26,7 @@ action_dict = {
 }
 
 def getViper(game, reward):
-    base_path = f"../../SCoBots/resources/viper_extracts/extract_output/{game}_seed0_reward-{reward}_oc_pruned-extraction"
+    base_path = f"../SCoBots/resources/viper_extracts/extract_output/{game}_seed0_reward-{reward}_oc_pruned-extraction"
     file_name = None
     for file in os.listdir(base_path):
         if file.endswith("_best.viper"):
@@ -39,7 +39,7 @@ def getViper(game, reward):
 
         env_str = f"ALE/{game}-v5"
 
-        ff_file_path = Path(f"../../SCoBots/resources/checkpoints/{game}_seed0_reward-{reward}_oc_pruned")
+        ff_file_path = Path(f"../SCoBots/resources/checkpoints/{game}_seed0_reward-{reward}_oc_pruned")
         pruned_ff_name = f"pruned_{game.lower()}.yaml"
 
         if not ff_file_path.exists():        
