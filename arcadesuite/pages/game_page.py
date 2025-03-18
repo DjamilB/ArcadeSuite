@@ -5,7 +5,7 @@ from pettingzoo.atari.base_atari_env import BaseAtariEnv
 import ocatari
 import torch
 import numpy as np
-from DecisionTree.utils import getViper   
+from DecisionTree.utils import get_Decisiontree_data   
 from DecisionTree import Decisiontree
 from base64 import b64encode
 from utils import head_html, get_keys_to_action_p1, get_keys_to_action_p2, custom_load_agent
@@ -27,7 +27,8 @@ class GamePage:
             # ui.add_body_html("<canvas id='grayCanvas' style='border: 1px solid black;' width=84px height=84px></canvas>")
             with ui.row():
                 ui.add_body_html("<canvas id='gameCanvas' onload='onCanvasLoad()' style='border: 1px solid black;' width=640px height=840px></canvas>")
-                self.tree_vis = ui.html("")
+                with ui.column():
+                    self.tree_vis = ui.html("")
             ui.add_body_html("<script type='text/javascript' src='static/javascript/canvas.js'></script>")
             ui.keyboard(on_key=self.handle_key)
 
@@ -59,7 +60,7 @@ class GamePage:
                 obs_mode = "dqn"
                 obs_type = "grayscale_image"
             elif "obj" in p1_agent_path:
-                model, features = getViper(game, "env")   # TODO (Djamil): Rewardtype (human, env)
+                model, features = get_Decisiontree_data(game, "env")   # TODO (Djamil): Rewardtype (human, env)
                 self.tree = Decisiontree.Decisiontree(model, features)
 
         elif p2_is_agent:
