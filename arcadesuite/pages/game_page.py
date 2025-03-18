@@ -5,6 +5,8 @@ from pettingzoo.atari.base_atari_env import BaseAtariEnv
 import ocatari
 import torch
 import numpy as np
+from DecisionTree.utils import getViper   
+from DecisionTree import Decisiontree
 from base64 import b64encode
 from utils import head_html, get_keys_to_action_p1, get_keys_to_action_p2, custom_load_agent
 from supersuit import resize_v1, frame_stack_v1
@@ -20,7 +22,9 @@ class GamePage:
             ui.add_head_html(head_html)
             # Debug canvas for grayscale observation data
             # ui.add_body_html("<canvas id='grayCanvas' style='border: 1px solid black;' width=84px height=84px></canvas>")
-            ui.add_body_html("<canvas id='gameCanvas' style='border: 1px solid black;' width=640px height=840px></canvas>")
+            with ui.row():
+                ui.add_body_html("<canvas id='gameCanvas' onload='onCanvasLoad()' style='border: 1px solid black;' width=640px height=840px></canvas>")
+                self.tree_vis = ui.html("")
             ui.add_body_html("<script type='text/javascript' src='static/javascript/canvas.js'></script>")
             ui.keyboard(on_key=self.handle_key)
 
@@ -40,6 +44,10 @@ class GamePage:
             elif "c51" in p1_agent_path:
                 obs_mode = "dqn"
                 obs_type = "grayscale_image"
+            elif "obj" in p1_agent_path:
+                model, features = getViper(game, "env")   # TODO (Djamil): Rewardtype (human, env)
+                self.tree = Decisiontree.Decisiontree(model, features)
+
         elif p2_is_agent:
             if "dqn" in p2_agent_path:
                 obs_type = "grayscale_image"
@@ -164,9 +172,15 @@ class GamePage:
                 else:
                     action = 0
                 self.obs, self.reward, self.terminated, self.truncated, self.info = self.env.step(action)
+
             else:
                 action = self.policies['first_0'](torch.Tensor(self.obs).unsqueeze(0))[0]
                 self.obs, self.reward, self.terminated, self.truncated, self.info = self.env.step(action)
+                print(f"Observation\n{self.obs}")
+                print(f"Flatten Observation\n{self.obs.flatten()}")
+                temp = self.tree.get_path(self.obs.flatten())
+                self.tree_vis.set_content(temp)
+
 
         if self.is_multiplayer:
             _, self.reward, self.terminated, self.truncated, self.info = self.env.last()
