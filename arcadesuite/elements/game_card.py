@@ -5,7 +5,17 @@ import json
 
 
 class GameCard(SelectableCard):
+    """
+    A game card that displays the image and title of a game.
+
+    Attributes:
+        `label` is the label of the game card.
+    """
     def __init__(self, name, *args, **kwargs):
+        """
+        Initializes the game card.
+        :param name: the title of the game.
+        """
         super().__init__(*args, **kwargs)
 
         with self:
@@ -20,4 +30,7 @@ class GameCard(SelectableCard):
 
 
     def get_text(self):
+        """
+        :return: the text of the `label` attribute.
+        """
         return self.label.text

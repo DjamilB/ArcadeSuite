@@ -16,6 +16,9 @@ class GamePage:
     def __init__(self):
         @ui.page("/game_page")
         def page():
+            """
+            Creates the game page with the game canvas and the decision tree visualization
+            """
             # TODO(lars): rework game loop
             self.timer = ui.timer(1/30, self.step_game)
 
@@ -29,6 +32,17 @@ class GamePage:
             ui.keyboard(on_key=self.handle_key)
 
     def populate(self, game, modifs, p1_is_agent, p1_agent_path, is_multiplayer=False, p2_is_agent=False, p2_agent_path=""):
+        """
+        Populates the game page with the given game, modifs and agents
+        :param game: the game to be played
+        :param modifs: the modifications to the game
+        :param p1_is_agent: if player 1 is an agent
+        :param p1_agent_path: path to the agent of player 1
+        :param is_multiplayer: if the game is multiplayer
+        :param p2_is_agent: if player 2 is an agent
+        :param p2_agent_path: path to the agent of player 2
+        """
+
         ocatari.core.UPSCALE_FACTOR = 4
         self.p1_is_agent = p1_is_agent
         self.p2_is_agent = p2_is_agent
@@ -129,6 +143,9 @@ class GamePage:
                 self.current_keys_down_p2.remove(str(e.key))
 
     def step_game(self):
+        """
+        Steps the game by one frame
+        """
         self.pressed_keys_p1 = list(self.current_keys_down_p1)
         self.pressed_keys_p1.sort()
         self.pressed_keys_p1 = tuple(self.pressed_keys_p1)

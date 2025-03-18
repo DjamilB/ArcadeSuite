@@ -10,7 +10,14 @@ UNACTIVE_COLOR = "bg-grey-5"
 
 
 class SelectableCard(ui.card):
+    """
+    A card that can be selected or unselected and activated or deactivated.
+    """
     def __init__(self, active=True, *args, **kwargs):
+        """
+        Initializes the selectable card.
+        :param active: if true, the card is initialized as active.
+        """
         super().__init__(*args, **kwargs)
 
         self._active = True
@@ -19,6 +26,9 @@ class SelectableCard(ui.card):
         self._classes.append(UNSELECTED_COLOR)
 
     def select(self):
+        """
+        Selects the card.
+        """
         self._selected = True
         if UNSELECTED_CLASS in self._classes:
             self._classes.remove(UNSELECTED_CLASS)
@@ -35,6 +45,9 @@ class SelectableCard(ui.card):
         self.update()
 
     def unselect(self):
+        """
+        Unselects the card.
+        """
         self._selected = False
         if SELECTED_CLASS in self._classes:
             self._classes.remove(SELECTED_CLASS)
@@ -51,6 +64,9 @@ class SelectableCard(ui.card):
         self.update()
 
     def activate(self):
+        """
+        Activates the card.
+        """
         if not self._active:
             self._active = True
             self._classes.remove(UNACTIVE_COLOR)
@@ -59,6 +75,9 @@ class SelectableCard(ui.card):
         return self
 
     def deactivate(self):
+        """
+        Deactivates the card.
+        """
         if self._active:
             self._active = False
 
