@@ -3,6 +3,7 @@ import json
 import ale_py
 import load_agent
 from ocatari import utils
+from nicegui.events import KeyEventArguments
     
 
 head_html = '''
@@ -48,6 +49,46 @@ def map_to_pygame_key_codes(keycode):
         "d": 100,
     }.get(str(keycode), 0)
 
+def handle_menu_movement(index, list, e: KeyEventArguments, columns = -1):
+    if columns == -1:
+        if e.key.arrow_up:
+            while True:
+                if index > 0:
+                    index -= 1
+                else:
+                    index = len(list) - 1
+
+                if list[index]._active:
+                    break
+        elif e.key.arrow_down:
+            while True:
+                index = (index + 1) % len(list)
+
+                if list[index]._active:
+                    break
+    else:
+        if e.key.arrow_left:
+            while True:
+                if index > 0:
+                    index -= 1
+                else:
+                    index = len(list) - 1
+
+                if list[index]._active:
+                    break
+        elif e.key.arrow_right:
+            while True:
+                index = (index + 1) % len(list)
+
+                if list[index]._active:
+                    break
+        elif e.key.arrow_up:
+            if index >= columns:
+                index -= columns
+        elif e.key.arrow_down:
+            if index <= len(list) - 1 - columns:
+                index += columns
+    return index
 
 def get_keys_to_action_p1() -> dict[tuple[int, ...], ale_py.Action]:
     UP = "w"
@@ -82,7 +123,6 @@ def get_keys_to_action_p1() -> dict[tuple[int, ...], ale_py.Action]:
         tuple(sorted(mapping[act_idx])): act_idx for act_idx in range(18)
     }
 
-
 def get_keys_to_action_p2() -> dict[tuple[int, ...], ale_py.Action]:
     UP = "ArrowUp"
     LEFT = "ArrowLeft"
@@ -115,7 +155,6 @@ def get_keys_to_action_p2() -> dict[tuple[int, ...], ale_py.Action]:
     return {
         tuple(sorted(mapping[act_idx])): act_idx for act_idx in range(18)
     }
-
 
 class FakeEnv:
     def __init__(self, observation_space, action_space, obs_mode):
