@@ -11,6 +11,8 @@ import elements
 import pages
 
 CARD_COLUMNS = 10
+NATIVE_MODE = True
+FULLSCREEN = False
 
 # Uncomment to open Web Inspector
 # app.native.start_args["debug"] = True
@@ -22,10 +24,13 @@ select_page = pages.Selection(game_page)
 
 select_index = 0
 
+first_start = True
+
 # TODO(lars): make resource/model folder locations program arguments
 @ui.page("/")
 def main_page():
     global select_index
+    global first_start
 
     GAMES = get_games()
     selected_game = GAMES[select_index]
@@ -40,6 +45,10 @@ def main_page():
             if game == GAMES[select_index]:
                 cards[-1].select()
 
+    if not FULLSCREEN and first_start:
+        app.native.main_window.maximize()
+        first_start = False
+
     def handle_key(e: KeyEventArguments):
         global select_index
         nonlocal selected_game
@@ -50,6 +59,9 @@ def main_page():
             if e.key == "Enter":
                 select_page.set_selected_game(selected_game)
                 ui.navigate.to("/selection")
+            elif e.key == "Escape":
+                if NATIVE_MODE:
+                    app.shutdown()
 
             cards[prev_select].unselect()
             cards[select_index].select()
@@ -58,4 +70,4 @@ def main_page():
     ui.keyboard(on_key=handle_key)
 
 
-ui.run(title="Arcade Suite", native=False, dark=False, window_size=(1000, 900))
+ui.run(title="Arcade Suite", native=NATIVE_MODE, dark=False, fullscreen=FULLSCREEN)
