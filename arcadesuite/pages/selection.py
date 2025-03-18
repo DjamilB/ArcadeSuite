@@ -317,7 +317,6 @@ class Selection:
                 self.type = text.lower().replace(" ", "_")
                 if self.type == "object_ppo":
                     self.type = "obj_ppo"
-                print(self.type)
 
                 ui.navigate.to("/selection/Agents/path")
 
