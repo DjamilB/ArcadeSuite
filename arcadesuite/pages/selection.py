@@ -280,6 +280,7 @@ class Selection:
                 elif self._agent_cards[self._current_agent_index].get_text() == "Submit":
                     ui.navigate.to("/selection")
                 elif "Agent" in self._agent_cards[self._current_agent_index].get_text():
+                    self.is_p1 = self._agent_cards[self._current_agent_index - 1].get_text() == "Player1"
                     ui.navigate.to("/selection/Agents/seed")
 
         self._agent_cards[prev_index].unselect()
