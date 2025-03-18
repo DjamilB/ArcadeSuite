@@ -30,10 +30,10 @@ class GamePage:
                     ui.html("<canvas id='gameCanvas' onload='onCanvasLoad()' style='border: 1px solid black;' width=640px height=840px></canvas>")
                 with ui.column():
                     self.tree_vis = ui.html("")
-            ui.add_head_html("<script src='static/javascript/canvas.js' defer></script>")
+            ui.add_body_html("<script type='text/javascript' src='static/javascript/canvas.js'></script>")
             ui.keyboard(on_key=self.handle_key)
 
-    def populate(self, game, modifs, p1_is_agent, p1_agent_path, is_multiplayer=False, p2_is_agent=False, p2_agent_path=""):
+    def populate(self, game, modifs, p1_is_agent,_current_seed_index,  p1_agent_path, is_multiplayer=False, p2_is_agent=False, p2_agent_path=""):
         """
         Populates the game page with the given game, modifs and agents
         :param game: the game to be played
@@ -49,6 +49,7 @@ class GamePage:
         self.p1_is_agent = p1_is_agent
         self.p2_is_agent = p2_is_agent
         self.is_multiplayer = is_multiplayer
+        self._current_seed_index = _current_seed_index
 
         # create HackAtari environment
         obs_mode = "obj"
@@ -61,7 +62,7 @@ class GamePage:
                 obs_mode = "dqn"
                 obs_type = "grayscale_image"
             elif "obj" in p1_agent_path:
-                model, features = get_Decisiontree_data(game, "env")   # TODO (Djamil): Rewardtype (human, env)
+                model, features = get_Decisiontree_data(game, "env", self._current_seed_index)   # TODO (Djamil): Rewardtype (human, env)
                 self.tree = Decisiontree.Decisiontree(model, features)
 
         elif p2_is_agent:

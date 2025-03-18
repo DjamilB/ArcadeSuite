@@ -36,7 +36,7 @@ class Selection:
             self._agent_cards = list()
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column(align_items="center").classes("justify-center w-[50%] q-pl-md"):
                     if self.meta["multiplayer"]:
                         self._agent_cards.append(elements.CarouselCard("Multiplayer", {"Off": False, "On": True}))
                         if self.is_multiplayer:
@@ -77,7 +77,7 @@ class Selection:
 
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="start").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column(align_items="center").classes("justify-center w-[50%] q-pl-md"):
                     for seed in seeds:
                         self._seed_cards.append(elements.LabelCard(f"Seed: {seed}"))
                 self.detail_panel()
@@ -111,7 +111,7 @@ class Selection:
 
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="start").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column(align_items="center").classes("justify-center w-[50%] q-pl-md"):
                     if found_dqn:
                         self._type_cards.append(elements.LabelCard("DQN"))
                     if found_c51:
@@ -141,7 +141,7 @@ class Selection:
 
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="start").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column(align_items="center").classes("justify-center w-[50%] q-pl-md"):
                     for agent in agents:
                         self._agent_path_cards.append(elements.LabelCard(agent))
                 self.detail_panel()
@@ -155,7 +155,7 @@ class Selection:
 
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="left").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column(align_items="center").classes("justify-center w-[50%] q-pl-md"):
                     for modif in self.modifs:
                         self._modif_cards.append(elements.CarouselCard(modif, self.meta["modifs"][modif]).classes("q-pr-md"))
 
@@ -233,6 +233,7 @@ class Selection:
                     self._game_page.populate(self.selected_game,
                                              self.selected_modifs,
                                              self.p1_is_agent,
+                                             self._current_seed_index,
                                              self.p1_agent_path,
                                              self.is_multiplayer,
                                              self.p2_is_agent if self.is_multiplayer else False,
