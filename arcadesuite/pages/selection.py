@@ -118,10 +118,11 @@ class Selection:
                         self._type_cards.append(elements.LabelCard("DQN"))
                     if found_c51:
                         self._type_cards.append(elements.LabelCard("C51"))
-                    if found_obj_ppo:
+                    if found_obj_ppo and not self.is_multiplayer:
                         self._type_cards.append(elements.LabelCard("Object PPO"))
-                    if found_pixel_ppo:
-                        self._type_cards.append(elements.LabelCard("Pixel PPO"))
+                    # TODO: Add support for pixel PPO
+                    # if found_pixel_ppo and not self.is_multiplayer:
+                    #     self._type_cards.append(elements.LabelCard("Pixel PPO"))
                 self.detail_panel()
             self._type_cards[self._current_type_index].select()
 
