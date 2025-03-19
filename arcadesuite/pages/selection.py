@@ -1,6 +1,6 @@
 from nicegui import ui
 from nicegui.events import KeyEventArguments
-from utils import get_json, head_html
+from utils import get_json, head_html, handle_menu_movement
 import os
 
 import elements
@@ -192,25 +192,6 @@ class Selection:
         self.modifs = list()
         for modif in self.meta["modifs"]:
             self.modifs.append(modif)
-
-    @staticmethod
-    def handle_movement(index, list, e: KeyEventArguments):
-        if e.key.arrow_up:
-            while True:
-                if index > 0:
-                    index -= 1
-                else:
-                    index = len(list) - 1
-
-                if list[index]._active:
-                    break
-        elif e.key.arrow_down:
-            while True:
-                index = (index + 1) % len(list)
-
-                if list[index]._active:
-                    break
-        return index
     
     def detail_panel(self):
         with ui.column(align_items="center").classes('w-[49%] bg-gray-100'):
@@ -223,7 +204,7 @@ class Selection:
     def handle_selection_keys(self, e: KeyEventArguments):
         prev_index = self._current_selection_index
         if e.action.keydown:
-            self._current_selection_index = self.handle_movement(self._current_selection_index, self._selection_cards, e)
+            self._current_selection_index = handle_menu_movement(self._current_selection_index, self._selection_cards, e)
 
             if e.key == "Escape":
                 self._current_selection_index = 0
@@ -250,7 +231,7 @@ class Selection:
     def handle_agent_keys(self, e: KeyEventArguments):
         prev_index = self._current_agent_index
         if e.action.keydown:
-            self._current_agent_index = self.handle_movement(self._current_agent_index, self._agent_cards, e)
+            self._current_agent_index = handle_menu_movement(self._current_agent_index, self._agent_cards, e)
 
             if e.key == "Escape":
                 self._current_agent_index = 0
@@ -295,7 +276,7 @@ class Selection:
         prev_index = self._current_seed_index
 
         if e.action.keydown:
-            self._current_seed_index = self.handle_movement(self._current_seed_index, self._seed_cards, e)
+            self._current_seed_index = handle_menu_movement(self._current_seed_index, self._seed_cards, e)
 
             if e.key == "Escape":
                 self._current_seed_index = 0
@@ -311,7 +292,7 @@ class Selection:
         prev_index = self._current_type_index
 
         if e.action.keydown:
-            self._current_type_index = self.handle_movement(self._current_type_index, self._type_cards, e)
+            self._current_type_index = handle_menu_movement(self._current_type_index, self._type_cards, e)
 
             if e.key == "Escape":
                 self._current_type_index = 0
@@ -331,7 +312,7 @@ class Selection:
     def handle_path_keys(self, e: KeyEventArguments):
         prev_index = self._current_agent_path_index
         if e.action.keydown:
-            self._current_agent_path_index = self.handle_movement(self._current_agent_path_index, self._agent_path_cards, e)
+            self._current_agent_path_index = handle_menu_movement(self._current_agent_path_index, self._agent_path_cards, e)
 
             if e.key == "Escape":
                 self._current_agent_path_index = 0
@@ -354,7 +335,7 @@ class Selection:
     def handle_modif_keys(self, e: KeyEventArguments):
         prev_index = self._current_modif_index
         if e.action.keydown:
-            self._current_modif_index = self.handle_movement(self._current_modif_index, self._modif_cards, e)
+            self._current_modif_index = handle_menu_movement(self._current_modif_index, self._modif_cards, e)
 
             if e.key == "Escape":
                 self._current_modif_index = 0
