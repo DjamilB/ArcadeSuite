@@ -1,10 +1,9 @@
 from nicegui import ui
 from nicegui.events import KeyEventArguments
-from utils import get_json, head_html, handle_menu_movement
+from arcadesuite.utils import get_json, head_html, handle_menu_movement
+from arcadesuite import elements
 import utils
 import os
-
-import elements
 
 class Selection:
     def __init__(self, game_page):
@@ -50,7 +49,11 @@ class Selection:
                     if not self.p1_is_agent:
                         self._agent_cards[-1].deactivate()
                     if self.p1_agent_path != "":
-                        self._agent_cards[-1].set_text(f"Agent: {self.p1_agent_path}")
+                        if not self.is_multiplayer or "obj_ppo" not in self.p1_agent_path:
+                            self._agent_cards[-1].set_text(f"Agent: {self.p1_agent_path}")
+                        else:
+                            self.p1_agent_path = ""
+
 
                     if self.meta["multiplayer"]:
                         self._agent_cards.append(elements.CarouselCard("Player2", {"Player": "Player", "Agent": "Agent"}))
@@ -269,6 +272,7 @@ class Selection:
                         else:
                             self._agent_cards[-3].deactivate()
                             self._agent_cards[-2].deactivate()
+                    ui.run_javascript("location.reload();")
                 elif self._agent_cards[self._current_agent_index].get_text() == "Submit":
                     self._current_agent_index = 0
                     ui.navigate.to("/selection")
@@ -327,9 +331,9 @@ class Selection:
             elif e.key == "Enter":
                 text = self._agent_path_cards[self._current_agent_path_index].get_text()
                 if self.is_p1:
-                    self.p1_agent_path = f"../models/{self.selected_game}/{self.seed}/{text}"
+                    self.p1_agent_path = f"{utils.models_path}/{self.selected_game}/{self.seed}/{text}"
                 else:
-                    self.p2_agent_path = f"../models/{self.selected_game}/{self.seed}/{text}"
+                    self.p2_agent_path = f"{utils.models_path}/{self.selected_game}/{self.seed}/{text}"
 
                 self._current_seed_index = 0
                 self._current_type_index = 0
