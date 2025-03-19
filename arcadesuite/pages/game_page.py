@@ -63,7 +63,10 @@ class GamePage:
                 obs_type = "grayscale_image"
             elif "obj" in p1_agent_path:
                 model, features = get_Decisiontree_data(game, "env", self._current_seed_index)   # TODO (Djamil): Rewardtype (human, env)
-                self.tree = Decisiontree.Decisiontree(model, features)
+                if model: 
+                    self.tree = Decisiontree.Decisiontree(model, features)
+                else: 
+                    self.tree = None
 
         elif p2_is_agent:
             if "dqn" in p2_agent_path:
@@ -196,8 +199,9 @@ class GamePage:
             else:
                 action = self.policies['first_0'](torch.Tensor(self.obs).unsqueeze(0))[0]
                 self.obs, self.reward, self.terminated, self.truncated, self.info = self.env.step(action)
-                temp = self.tree.get_path(self.obs.flatten())
-                self.tree_vis.set_content(temp)
+                if self.tree:
+                    temp = self.tree.get_path(self.obs.flatten())
+                    self.tree_vis.set_content(temp)
 
 
         if self.is_multiplayer:
