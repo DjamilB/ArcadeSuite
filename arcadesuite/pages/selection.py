@@ -1,10 +1,10 @@
 from nicegui import ui
 from nicegui.events import KeyEventArguments
 from utils import get_json, head_html, handle_menu_movement
+import utils
 import os
 
 import elements
-
 
 class Selection:
     def __init__(self, game_page):
@@ -25,6 +25,8 @@ class Selection:
                 with ui.column(align_items="center").classes('w-[49%]'):    
                     self._selection_cards.append(elements.LabelCard("Agents"))
                     self._selection_cards.append(elements.LabelCard("Modifiers"))
+                    if self.is_multiplayer:
+                        self._selection_cards[-1].deactivate()
                     self._selection_cards.append(elements.LabelCard("Play"))
                 self.detail_panel()
             self._selection_cards[self._current_selection_index].select()   
@@ -36,7 +38,7 @@ class Selection:
             self._agent_cards = list()
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="center").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column(align_items="center").classes("justify-center w-[49%] q-pl-md"):
                     if self.meta["multiplayer"]:
                         self._agent_cards.append(elements.CarouselCard("Multiplayer", {"Off": False, "On": True}))
                         if self.is_multiplayer:
@@ -72,12 +74,12 @@ class Selection:
         def seed_selection_page():
             self._seed_cards = list()
 
-            seeds = os.listdir(f"../models/{self.selected_game}")
+            seeds = os.listdir(f"{utils.models_path}/{self.selected_game}")
             seeds.sort()
 
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="center").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column(align_items="center").classes("justify-center w-[49%] q-pl-md"):
                     for seed in seeds:
                         self._seed_cards.append(elements.LabelCard(f"Seed: {seed}"))
                 self.detail_panel()
@@ -89,7 +91,7 @@ class Selection:
         def type_selection_page():
             self._type_cards = list()
 
-            agents = os.listdir(f"../models/{self.selected_game}/{self.seed}")
+            agents = os.listdir(f"{utils.models_path}/{self.selected_game}/{self.seed}")
 
             found_dqn = False
             found_obj_ppo = False
@@ -111,7 +113,7 @@ class Selection:
 
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="center").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column(align_items="center").classes("justify-center w-[49%] q-pl-md"):
                     if found_dqn:
                         self._type_cards.append(elements.LabelCard("DQN"))
                     if found_c51:
@@ -128,7 +130,7 @@ class Selection:
 
         @ui.page("/selection/Agents/path")
         def agent_selection_page():
-            all_agents = os.listdir(f"../models/{self.selected_game}/{self.seed}")
+            all_agents = os.listdir(f"{utils.models_path}/{self.selected_game}/{self.seed}")
             agents = list()
 
             for agent in all_agents:
@@ -141,7 +143,7 @@ class Selection:
 
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="center").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column(align_items="center").classes("justify-center w-[49%] q-pl-md"):
                     for agent in agents:
                         self._agent_path_cards.append(elements.LabelCard(agent))
                 self.detail_panel()
@@ -155,7 +157,7 @@ class Selection:
 
             ui.add_head_html(head_html)
             with ui.row(align_items="center").classes("absolute-center w-full h-full items-center"):
-                with ui.column(align_items="center").classes("justify-center w-[50%] q-pl-md"):
+                with ui.column(align_items="center").classes("justify-center w-[49%] q-pl-md"):
                     for modif in self.modifs:
                         self._modif_cards.append(elements.CarouselCard(modif, self.meta["modifs"][modif]).classes("q-pr-md"))
 
@@ -180,8 +182,7 @@ class Selection:
 
     def set_selected_game(self, game):
         self.selected_game = game
-        # self.meta = get_json(f"../res/{game}/meta.json")
-        self.meta = get_json(f"../res/meta.json")[game]
+        self.meta = get_json(os.path.join(utils.res_path, "meta.json"))[game]
         self.selected_modifs = []
         self.p1_is_agent = False
         self.p2_is_agent = False
@@ -192,14 +193,18 @@ class Selection:
         self.modifs = list()
         for modif in self.meta["modifs"]:
             self.modifs.append(modif)
-    
+
     def detail_panel(self):
-        with ui.column(align_items="center").classes('w-[49%] bg-gray-100'):
-            ui.label("Details").tailwind.font_weight('bold')
-            ui.label(f"Game: {self.selected_game}")
-            ui.label(f"Player 1: {self.p1_agent_path if self.p1_is_agent else 'Human'}")
-            ui.label(f"Player 2: {self.p2_agent_path if self.p2_is_agent else ('Human' if self.is_multiplayer else 'System')}")
-            ui.label(f"Modifications: {', '.join(self.selected_modifs) if len(self.selected_modifs) > 0 else 'None'}")
+        with ui.column(align_items="center").classes('w-[49%]'):
+            with ui.card().classes("detail-card"):
+                ui.label("Details").tailwind.font_weight('bold')
+                ui.label(f"Game: {self.selected_game}")
+                ui.label(f"Player 1: {self.p1_agent_path if self.p1_is_agent else 'Human'}")
+                ui.label(f"Player 2: {self.p2_agent_path if self.p2_is_agent else ('Human' if self.is_multiplayer else 'System')}")
+                if self.is_multiplayer:
+                    ui.label("Modifications: Not supported in multiplayer mode")
+                else:
+                    ui.label(f"Modifications: {', '.join(self.selected_modifs) if len(self.selected_modifs) > 0 else 'None'}")
 
     def handle_selection_keys(self, e: KeyEventArguments):
         prev_index = self._current_selection_index
@@ -264,6 +269,7 @@ class Selection:
                             self._agent_cards[-3].deactivate()
                             self._agent_cards[-2].deactivate()
                 elif self._agent_cards[self._current_agent_index].get_text() == "Submit":
+                    self._current_agent_index = 0
                     ui.navigate.to("/selection")
                 elif "Agent" in self._agent_cards[self._current_agent_index].get_text():
                     self.is_p1 = self._agent_cards[self._current_agent_index - 1].get_text() == "Player1"

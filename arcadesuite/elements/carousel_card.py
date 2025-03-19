@@ -27,11 +27,11 @@ class CarouselCard(SelectableCard):
 
         with self:
             with ui.row():
-                self.label = ui.label(name).style("font-weight: bold;")
+                self.label = ui.label(name).style("")
                 if self._agents:
-                    self._key_label = ui.label(self._keys[0]).style("font-weight: bold; color: blue;")
+                    self._key_label = ui.label(self._keys[0]).style("color: blue;")
                 else: 
-                    self._key_label = ui.label(self._keys[0]).style("font-weight: bold; color: red;")
+                    self._key_label = ui.label(self._keys[0]).style("color: red;")
 
     def next(self):
         """

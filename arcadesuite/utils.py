@@ -15,16 +15,25 @@ head_html = '''
                     background-color: bisque;
                     overflow: hidden;                   
                     font-family: "VT323", monospace;
-                    font-size: 18px;
+                    font-size: 24px;
                     font-weight: 400;
                     font-style: normal;
+                }
+                .detail-card {
+                    font-size: 30px;
                 }
             </style>
             '''
 
+models_path = None
+resources_path = None
+
+res_path = os.path.dirname(__file__).split(os.path.sep)
+res_path = os.path.sep.join(res_path[:-1])
+res_path = os.path.join(res_path, "res")
 
 def get_games():
-    path = "../res/games.json"
+    path = os.path.join(res_path, "games.json")
     if os.path.isfile(path):
         with open(path, "r") as file:
             games = json.load(file)
@@ -32,12 +41,18 @@ def get_games():
     else:
         raise FileNotFoundError(f"The file {path} does not exist.")
 
-
 def get_json(path):
     file = open(path, "r")
     contents = file.read()
     return json.loads(contents)
 
+def set_models_path(path):
+    global models_path
+    models_path = path
+
+def set_resources_path(path):
+    global resources_path
+    resources_path = path
 
 def map_to_pygame_key_codes(keycode):
     return {

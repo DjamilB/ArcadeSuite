@@ -1,10 +1,12 @@
 # fix issues with arch linux
 import multiprocessing
+from argparse import ArgumentParser
+
 multiprocessing.set_start_method("spawn", force=True)
 
 from nicegui import ui, app
 from nicegui.events import KeyEventArguments
-from utils import get_games, get_json, head_html, handle_menu_movement
+from utils import get_games, head_html, handle_menu_movement, set_models_path, set_resources_path
 import os
 
 import elements
@@ -14,8 +16,36 @@ CARD_COLUMNS = 10
 NATIVE_MODE = True
 FULLSCREEN = False
 
-# Uncomment to open Web Inspector
+models_path = None
+resources_path = None
+
+# Uncomment to open Web Inspector in native mode
 # app.native.start_args["debug"] = True
+
+parser = ArgumentParser(
+    prog="arcadesuite",
+    description="Arcade Suite",
+)
+parser.add_argument(
+    "--native",
+    action="store_true",
+    help="Run the application in native mode",
+)
+parser.add_argument(
+    "--fullscreen",
+    action="store_true",
+    help="Run the application in fullscreen mode",
+)
+parser.add_argument("-m", "--model", type=str, help="Path of the models folder", default="../models")
+parser.add_argument("-r", "--resource", type=str, help="Path of the ScoBots resources folder", default="../ScoBots/resources")
+
+args = parser.parse_args()
+
+if args.model is not None:
+    set_models_path(args.model)
+
+if args.resource is not None:
+    set_resources_path(args.resource)
 
 app.add_static_files(url_path="/static/javascript", local_directory=os.path.join(os.path.dirname(__file__), 'javascript'))
 
@@ -45,7 +75,7 @@ def main_page():
             if game == GAMES[select_index]:
                 cards[-1].select()
 
-    if not FULLSCREEN and first_start and NATIVE_MODE:
+    if not args.fullscreen and first_start and args.native:
         app.native.main_window.maximize()
         first_start = False
 
@@ -70,4 +100,4 @@ def main_page():
     ui.keyboard(on_key=handle_key)
 
 
-ui.run(title="Arcade Suite", native=NATIVE_MODE, dark=False, fullscreen=FULLSCREEN)
+ui.run(title="Arcade Suite", native=args.native, fullscreen=args.fullscreen)

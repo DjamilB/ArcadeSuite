@@ -14,7 +14,7 @@ class LabelCard(SelectableCard):
         super().__init__(*args, **kwargs)
 
         with self:
-            self.label = ui.label(text).classes("text-2x1 text-center align-middle font-bold")
+            self.label = ui.label(text).classes("text-2x1 text-center align-middle")
 
     def set_text(self, text):
         """
