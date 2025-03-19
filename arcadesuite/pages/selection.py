@@ -2,7 +2,7 @@ from nicegui import ui
 from nicegui.events import KeyEventArguments
 from arcadesuite.utils import get_json, head_html, handle_menu_movement
 from arcadesuite import elements
-import utils
+import arcadesuite.utils
 import os
 
 class Selection:
@@ -77,7 +77,7 @@ class Selection:
         def seed_selection_page():
             self._seed_cards = list()
 
-            seeds = os.listdir(f"{utils.models_path}/{self.selected_game}")
+            seeds = os.listdir(f"{arcadesuite.utils.models_path}/{self.selected_game}")
             seeds.sort()
 
             ui.add_head_html(head_html)
@@ -94,7 +94,7 @@ class Selection:
         def type_selection_page():
             self._type_cards = list()
 
-            agents = os.listdir(f"{utils.models_path}/{self.selected_game}/{self.seed}")
+            agents = os.listdir(f"{arcadesuite.utils.models_path}/{self.selected_game}/{self.seed}")
 
             found_dqn = False
             found_obj_ppo = False
@@ -134,7 +134,7 @@ class Selection:
 
         @ui.page("/selection/Agents/path")
         def agent_selection_page():
-            all_agents = os.listdir(f"{utils.models_path}/{self.selected_game}/{self.seed}")
+            all_agents = os.listdir(f"{arcadesuite.utils.models_path}/{self.selected_game}/{self.seed}")
             agents = list()
 
             for agent in all_agents:
@@ -186,7 +186,7 @@ class Selection:
 
     def set_selected_game(self, game):
         self.selected_game = game
-        self.meta = get_json(os.path.join(utils.res_path, "meta.json"))[game]
+        self.meta = get_json(os.path.join(arcadesuite.utils.res_path, "meta.json"))[game]
         self.selected_modifs = []
         self.p1_is_agent = False
         self.p2_is_agent = False
@@ -331,9 +331,9 @@ class Selection:
             elif e.key == "Enter":
                 text = self._agent_path_cards[self._current_agent_path_index].get_text()
                 if self.is_p1:
-                    self.p1_agent_path = f"{utils.models_path}/{self.selected_game}/{self.seed}/{text}"
+                    self.p1_agent_path = f"{arcadesuite.utils.models_path}/{self.selected_game}/{self.seed}/{text}"
                 else:
-                    self.p2_agent_path = f"{utils.models_path}/{self.selected_game}/{self.seed}/{text}"
+                    self.p2_agent_path = f"{arcadesuite.utils.models_path}/{self.selected_game}/{self.seed}/{text}"
 
                 self._current_seed_index = 0
                 self._current_type_index = 0

@@ -463,20 +463,18 @@
                 "On" : "drunken_boxing" 
             },
             "Changes the player's color to a specified color": {
-                "Default": "",
-                "White": "color_player_white",
-                "Black": "color_player_black",
-                "Red": "color_player_red",
-                "Blue": "color_player_blue",
-                "Green": "color_player_green"
+                "White": "",
+                "Black": "color_p0",
+                "Red": "color_p1",
+                "Blue": "color_p2",
+                "Green": "color_p3"
             },
             "Change the enemy's color to a specified color": {
-                "Default": "",
-                "Black": "color_enemy_black",
-                "White": "color_enemy_white",
-                "Red": "color_enemy_red",
-                "Blue": "color_enemy_blue",
-                "Green": "color_enemy_green"
+                "Black": "",
+                "White": "color_e0",
+                "Red": "color_e1",
+                "Blue": "color_e2",
+                "Green": "color_e3"
             },
             "Switch Position of Player and Enemy": {
                 "Off": "",

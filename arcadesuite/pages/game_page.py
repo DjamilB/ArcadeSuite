@@ -6,7 +6,7 @@ import ocatari
 import torch
 import numpy as np
 from DecisionTree.utils import get_Decisiontree_data   
-from DecisionTree import Decisiontree
+from arcadesuite import DecisionTree
 from base64 import b64encode
 from utils import head_html, get_keys_to_action_p1, get_keys_to_action_p2, custom_load_agent
 from supersuit import resize_v1, frame_stack_v1
@@ -64,7 +64,7 @@ class GamePage:
             elif "obj" in p1_agent_path:
                 model, features = get_Decisiontree_data(game, "env", self._current_seed_index)   # TODO (Djamil): Rewardtype (human, env)
                 if model:
-                    self.tree = Decisiontree.Decisiontree(model, features)
+                    self.tree = DecisionTree.Decisiontree(model, features)
                 else:
                     self.tree = None
 

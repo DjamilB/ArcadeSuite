@@ -1,5 +1,5 @@
 import numpy as np
-from DecisionTree.utils import action_dict
+from .utils import action_dict
 
 # HTML-Constants
 red = '<span style="color: red";>'      # Operator

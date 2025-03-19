@@ -4,7 +4,8 @@ from scobi import Environment
 from pathlib import Path
 import os
 import sys
-import arcadesuite.utils
+
+from arcadesuite.utils import resources_path
 
 action_dict = {
     0: "NOOP",
@@ -28,7 +29,8 @@ action_dict = {
 }
 
 def get_viper(game, reward, seed):
-    base_path = f"{arcadesuite.utils.resources_path}/viper_extracts/extract_output/{game}_seed{seed}_reward-{reward}_oc_pruned-extraction"
+    print(resources_path)
+    base_path = f"{resources_path}/viper_extracts/extract_output/{game}_seed{seed}_reward-{reward}_oc_pruned-extraction"
     file_name = None
 
     try: 
@@ -48,7 +50,7 @@ def get_viper(game, reward, seed):
 def get_features(game, reward, seed):
     env_str = f"ALE/{game}-v5"
 
-    ff_file_path = Path(f"{arcadesuite.utils.resources_path}/checkpoints/{game}_seed{seed}_reward-{reward}_oc_pruned")
+    ff_file_path = Path(f"{resources_path}/checkpoints/{game}_seed{seed}_reward-{reward}_oc_pruned")
     pruned_ff_name = f"pruned_{game.lower()}.yaml"
     
     if not ff_file_path.exists():        
