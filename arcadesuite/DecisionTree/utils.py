@@ -30,19 +30,21 @@ action_dict = {
 def get_viper(game, reward, seed):
     base_path = f"{arcadesuite.utils.resources_path}/viper_extracts/extract_output/{game}_seed{seed}_reward-{reward}_oc_pruned-extraction"
     file_name = None
-    for file in os.listdir(base_path):
-        if file.endswith("_best.viper"):
-            file_name = file
-            break
-    
-    if file_name:
-        file_path = os.path.join(base_path, file_name)
-        print("\t\033[32m[Load Viper Tree]\033[0m Tree found!")
-    else: 
+
+    try: 
+        for file in os.listdir(base_path):
+            if file.endswith("_best.viper"):
+                file_name = file
+                break
+    except Exception as e: 
         print("\t\033[32m[Load Viper Tree]\033[0m Tree not Found!")
+        return None
 
-    return load(file_path)
-
+    
+    file_path = os.path.join(base_path, file_name)
+    print("\t\033[32m[Load Viper Tree]\033[0m Tree found!")
+    return load(file_path) 
+    
 def get_features(game, reward, seed):
     env_str = f"ALE/{game}-v5"
 
@@ -92,6 +94,5 @@ def get_Decisiontree_data(game, reward, seed):
 
         return model, features
     else:
-        print("No Viper Tree found!\n Try viper_extract")  
         return None, None
        
